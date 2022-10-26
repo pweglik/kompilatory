@@ -1,0 +1,6 @@
+ważna jest kolejność operacji, wyższy priorytet
+powinien być później w liście do rozpoznania
+to będzie później wzięty pod uwage (przez co będzie niżej w drzewie, a więc będzie miał wyższy priorytet)
+
+Kolejny problem z zagnieźdżonymi ifami:
+Do którego ifa dopasujemy else'a?
