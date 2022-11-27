@@ -12,16 +12,20 @@ class SimpleParser(Parser):
 
     @_('StatementList')
     def Program(self, p):
-        print('Program')
-        return
+        print('Program', [l for l in p])
+        return ('Program', [l for l in p])
 
     @_('')
     def empty(self, p):
         print("empty")
         return
 
-    @_('StatementList Statement',
-        'empty')
+    @_('StatementList Statement')
+    def StatementList(self, p):
+        print("StatementList", p[0], p[1])
+        return ("StatementList", p[0], p[1])
+
+    @_('empty')
     def StatementList(self, p):
         print("StatementList")
         return
@@ -32,10 +36,10 @@ class SimpleParser(Parser):
         'JumpStatement ";"',
         'PrintStatement ";"',
         'AssignmentStatement ";"',
-        'ExpressionStatement')
+        'ExpressionStatement ";"')
     def Statement(self, p):
-        print("Statement")
-        return
+        print("Statement", p[0])
+        return ("Statement", p[0])
 
     
     @_('"{" StatementList "}"')
@@ -45,8 +49,8 @@ class SimpleParser(Parser):
 
     @_('Expression')
     def ExpressionStatement(self, p):
-        print("ExpressionStatement")
-        return
+        print("ExpressionStatement", p[0])
+        return ("ExpressionStatement", p[0])
 
     @_('IF "(" Expression ")" Statement',
         'IF "(" Expression ")" Statement ELSE Statement')
@@ -77,17 +81,19 @@ class SimpleParser(Parser):
 
     @_('PrefixUnaryOperator PreExpressionPost PostfixUnaryOperator')
     def Expression(self, p):
-        print("PrintStatement")
-        return
+        print("Expression", p[0], p[1], p[2])
+        return ("Expression", p[0], p[1], p[2])
 
     @_('Expression ComparisonOperator Expression',
-        'Expression BinaryOperator Expression',
-        'Matrix',
-        'Primitive',
-        'ID')
+        'Expression BinaryOperator Expression')
     def PreExpressionPost(self, p):
-        print("Expression")
+        print("PreExpressionPost", )
         return
+
+    @_('Matrix', 'Primitive', 'ID')
+    def PreExpressionPost(self, p):
+        print('PreExpressionPost', p[0])
+        return ('PreExpressionPost', p[0])
 
     @_('empty',
         '"[" MatrixAccessRange "," MatrixAccessRange "]"')
@@ -136,8 +142,8 @@ class SimpleParser(Parser):
     @_('Number',
         'STRING')
     def Primitive(self, p):
-        print("Primitive")
-        return
+        print("Primitive", p[0])
+        return ('Primitive', p[0])
 
     @_('ZEROS "(" INT ")"',
         'ONES "(" INT ")"',
@@ -177,22 +183,22 @@ class SimpleParser(Parser):
 
     @_('SUB', 'empty')
     def PrefixUnaryOperator(self, p):
-        print("PrefixUnaryOperator")
-        return
+        print("PrefixUnaryOperator", p[0])
+        return ('PrefixUnaryOperator', p[0])
 
     @_('MAT_TRANS', 'empty')
     def PostfixUnaryOperator(self, p):
-        print("PostfixUnaryOperator")
-        return
+        print("PostfixUnaryOperator", p[0])
+        return ("PostfixUnaryOperator", p[0])
 
     @_('INT', 'FLOAT')
     def Number(self, p):
-        print("Number")
-        return
+        print("Number", p[0])
+        return ('Number', p[0])
 
     @_('EQ', 'LESS_EQ', 'GREATER_EQ', 'NOT_EQ', 'GREATER', 'LESS')
     def ComparisonOperator(self, p):
         print("ComparisonOperator")
-        return
+        return ('ComparisonOperator', p[0])
 
 
