@@ -146,8 +146,7 @@ class SimpleParser(Parser):
             print("ComplexExpression", p[0], p[1], p[2])
         return ("ComplexExpression", p[0], p[1], p[2])
 
-    #'Matrix'
-    @_('MatrixRowList', 'Primitive', 'ID')
+    @_('Matrix', 'Primitive', 'ID')
     def SimpleExpression(self, p):
         if self.verbose:
             print('SimpleExpression', p[0])
@@ -243,8 +242,8 @@ class SimpleParser(Parser):
     @_('"[" MatrixRow "]" "," MatrixRowList')
     def MatrixRowList(self, p):
         if self.verbose:
-            print("MatrixRowList", p[1], p[3])
-        return ("MatrixRowList", p[1], p[3])
+            print("MatrixRowList", p[1], p[4])
+        return ("MatrixRowList", p[1], p[4])
 
     @_('"[" MatrixRow "]"')
     def MatrixRowList(self, p):
@@ -255,9 +254,9 @@ class SimpleParser(Parser):
     @_('Number "," MatrixRow')
     def MatrixRow(self, p):
         if self.verbose:
-            print("MatrixRow", p[0], p[1])
+            print("MatrixRow", p[0], p[2])
 
-        return ("MatrixRow", p[0], p[1])
+        return ("MatrixRow", p[0], p[2])
 
     @_('Number')
     def MatrixRow(self, p):
