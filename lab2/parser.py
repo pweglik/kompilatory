@@ -13,7 +13,6 @@ class SimpleParser(Parser):
 
     @_('StatementList')
     def Program(self, p):
-        print('Program', [l for l in p])
         return ('Program', [l for l in p])
 
     @_('')
@@ -80,21 +79,21 @@ class SimpleParser(Parser):
         print("PrintStatement")
         return
 
-    @_('PrefixUnaryOperator PreExpressionPost PostfixUnaryOperator')
-    def Expression(self, p):
-        print("Expression", p[0], p[1], p[2])
-        return ("Expression", p[0], p[1], p[2])
+    # @_('PrefixUnaryOperator PreExpressionPost PostfixUnaryOperator')
+    # def Expression(self, p):
+    #     print("Expression", p[0], p[1], p[2])
+    #     return ("Expression", p[0], p[1], p[2])
 
     @_('Expression ComparisonOperator Expression',
         'Expression BinaryOperator Expression')
-    def PreExpressionPost(self, p):
-        print("PreExpressionPost", p[0], p[1], [2])
-        return ("PreExpressionPost", p[0], p[1], [2])
+    def Expression(self, p):
+        print("Expression", p[0], p[1], [2])
+        return ("Expression", p[0], p[1], [2])
 
     @_('Matrix', 'Primitive', 'ID')
-    def PreExpressionPost(self, p):
-        print('PreExpressionPost', p[0])
-        return ('PreExpressionPost', p[0])
+    def Expression(self, p):
+        print('Expression', p[0])
+        return ('Expression', p[0])
 
     @_('empty',
         '"[" MatrixAccessRange "," MatrixAccessRange "]"')

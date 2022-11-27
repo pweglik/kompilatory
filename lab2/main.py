@@ -6,13 +6,13 @@ if __name__ == '__main__':
     lexer = SimpleLexer()
     parser = SimpleParser()
 
-    text = '''a = 2;'''
+    text = '''1 + 2;'''
 
     tokens = lexer.tokenize(text)
     for t in lexer.tokenize(text):
         print(t)
     result = parser.parse(tokens)
-    print(result)
+    print(f'\n{result}')
 
 
 
