@@ -75,14 +75,17 @@ class SimpleParser(Parser):
         print("PrintStatement")
         return
 
+    @_('PrefixUnaryOperator PreExpressionPost PostfixUnaryOperator')
+    def Expression(self, p):
+        print("PrintStatement")
+        return
+
     @_('Expression ComparisonOperator Expression',
         'Expression BinaryOperator Expression',
-        'PrefixUnaryOperator Expression',
-        'Expression PostfixUnaryOperator',
         'Matrix',
         'Primitive',
         'ID')
-    def Expression(self, p):
+    def PreExpressionPost(self, p):
         print("Expression")
         return
 
