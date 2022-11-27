@@ -26,7 +26,13 @@ class SimpleParser(Parser):
             print("empty")
         return
 
-    @_('Statement', 'Statement StatementList')
+    @_('Statement StatementList')
+    def StatementList(self, p):
+        if self.verbose:
+            print("StatementList", p[0], p[1])
+        return ("StatementList", p[0], p[1])
+
+    @_('Statement')
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0])
@@ -131,7 +137,8 @@ class SimpleParser(Parser):
             print("ComplexExpression", p[0], p[1], p[2])
         return ("ComplexExpression", p[0], p[1], p[2])
 
-    @_('Matrix', 'MatrixRow', 'Primitive', 'ID')
+    #'Matrix'
+    @_('MatrixRowList', 'Primitive', 'ID')
     def SimpleExpression(self, p):
         if self.verbose:
             print('SimpleExpression', p[0])
@@ -185,11 +192,17 @@ class SimpleParser(Parser):
             print("List", p[1])
         return ("List", p[1])
 
-    @_('ListEl', 'ListEl "," ListContent')
+    @_('ListEl "," ListContent')
+    def ListContent(self, p):
+        if self.verbose:
+            print("ListContent", p[0], p[2])
+        return ("ListContent", p[0], p[2])
+
+    @_('ListEl')
     def ListContent(self, p):
         if self.verbose:
             print("ListContent", p[0])
-        return ("ListEl", p[0])
+        return ("ListContent", p[0])
 
     @_('ID', 'Primitive', 'List')
     def ListEl(self, p):
@@ -218,17 +231,31 @@ class SimpleParser(Parser):
             print("Matrix", p[1])
         return ("Matrix", p[1])
 
-    @_('"[" MatrixRow "]"','"[" MatrixRow "]" "," MatrixRowList')
+    @_('"[" MatrixRow "]" "," MatrixRowList')
+    def MatrixRowList(self, p):
+        if self.verbose:
+            print("MatrixRowList", p[1], p[3])
+        return ("MatrixRowList", p[1], p[3])
+
+    @_('"[" MatrixRow "]"')
     def MatrixRowList(self, p):
         if self.verbose:
             print("MatrixRowList", p[1])
-        return print("MatrixRowList", p[1])
+        return ("MatrixRowList", p[1])
 
-    @_('Number', 'Number "," MatrixRow')
+    @_('Number "," MatrixRow')
+    def MatrixRow(self, p):
+        if self.verbose:
+            print("MatrixRow", p[0], p[1])
+
+        return ("MatrixRow", p[0], p[1])
+
+    @_('Number')
     def MatrixRow(self, p):
         if self.verbose:
             print("MatrixRow", p[0])
-        return print("MatrixRow", p[0])
+
+        return ("MatrixRow", p[0])
 
     @_('ADD', 'SUB', 'MUL', 'DIV', 
     'ADD_EL','SUB_EL', 'MUL_EL', 'DIV_EL')
