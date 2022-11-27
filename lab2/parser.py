@@ -8,6 +8,7 @@ scanner_obj = SimpleLexer()
 
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
+    debugfile = "parser.out"
     
 
     @_('StatementList')
@@ -87,8 +88,8 @@ class SimpleParser(Parser):
     @_('Expression ComparisonOperator Expression',
         'Expression BinaryOperator Expression')
     def PreExpressionPost(self, p):
-        print("PreExpressionPost", )
-        return
+        print("PreExpressionPost", p[0], p[1], [2])
+        return ("PreExpressionPost", p[0], p[1], [2])
 
     @_('Matrix', 'Primitive', 'ID')
     def PreExpressionPost(self, p):
@@ -167,19 +168,23 @@ class SimpleParser(Parser):
     @_('ADD', 'SUB', 'MUL', 'DIV', 
     'ADD_EL','SUB_EL', 'MUL_EL', 'DIV_EL')
     def BinaryOperator(self, p):
-        print("BinaryOperator")
-        return
+        print("BinaryOperator", p[0])
+        return ("BinaryOperator", p[0])
 
-    @_('ID AssignmentOperator Expression', 
-        'ID MatrixAccess AssignmentOperator Expression')
+    @_('ID AssignmentOperator Expression')
     def AssignmentStatement(self, p):
-        print("AssignmentStatement")
-        return
+        print("AssignmentStatement", p[0], p[1], p[2])
+        return ("AssignmentStatement", p[0], p[1], p[2])
+
+    @_('ID MatrixAccess AssignmentOperator Expression')
+    def AssignmentStatement(self, p):
+        print("AssignmentStatement", p[0], p[1], p[2], p[3])
+        return ("AssignmentStatement", p[0], p[1], p[2], p[3])
 
     @_('ASS', 'ASS_ADD', 'ASS_SUB', 'ASS_DIV', 'ASS_MUL')
     def AssignmentOperator(self, p):
-        print("AssignmentOperator")
-        return
+        print("AssignmentOperator", p[0])
+        return ("AssignmentOperator", p[0])
 
     @_('SUB', 'empty')
     def PrefixUnaryOperator(self, p):
