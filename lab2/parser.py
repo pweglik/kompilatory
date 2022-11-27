@@ -17,7 +17,7 @@ class SimpleParser(Parser):
 
     @_('StatementList')
     def Program(self, p):
-        return ('Program', [l for l in p])
+        return ('Program', p[0])
 
     @_('')
     def empty(self, p):
