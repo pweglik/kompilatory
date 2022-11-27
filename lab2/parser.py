@@ -26,13 +26,7 @@ class SimpleParser(Parser):
             print("empty")
         return
 
-    @_('StatementList Statement')
-    def StatementList(self, p):
-        if self.verbose:
-            print("StatementList", p[0], p[1])
-        return ("StatementList", p[0], p[1])
-
-    @_('empty')
+    @_('Statement', 'Statement StatementList')
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0])
@@ -137,7 +131,7 @@ class SimpleParser(Parser):
             print("ComplexExpression", p[0], p[1], p[2])
         return ("ComplexExpression", p[0], p[1], p[2])
 
-    @_('Matrix', 'Primitive', 'ID')
+    @_('Matrix', 'MatrixRow', 'Primitive', 'ID')
     def SimpleExpression(self, p):
         if self.verbose:
             print('SimpleExpression', p[0])
@@ -191,13 +185,7 @@ class SimpleParser(Parser):
             print("List", p[1])
         return ("List", p[1])
 
-    @_('ListEl "," ListContent')
-    def ListContent(self, p):
-        if self.verbose:
-            print("ListContent", p[0], p[2])
-        return ("ListEl", p[0], p[2])
-
-    @_('empty')
+    @_('ListEl', 'ListEl "," ListContent')
     def ListContent(self, p):
         if self.verbose:
             print("ListContent", p[0])
@@ -230,19 +218,13 @@ class SimpleParser(Parser):
             print("Matrix", p[1])
         return ("Matrix", p[1])
 
-    @_('"[" MatrixRow "]" "," MatrixRowList')
+    @_('"[" MatrixRow "]"','"[" MatrixRow "]" "," MatrixRowList')
     def MatrixRowList(self, p):
         if self.verbose:
-            print("MatrixRowList", p[1], p[4])
-        return print("MatrixRowList", p[1], p[4])
-    
-    @_('empty')
-    def MatrixRowList(self, p):
-        if self.verbose:
-            print("MatrixRowList", p[0])
-        return print("MatrixRowList", p[0])
+            print("MatrixRowList", p[1])
+        return print("MatrixRowList", p[1])
 
-    @_('Number "," MatrixRow', 'empty')
+    @_('Number', 'Number "," MatrixRow')
     def MatrixRow(self, p):
         if self.verbose:
             print("MatrixRow", p[0])
