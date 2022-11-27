@@ -213,7 +213,7 @@ class SimpleParser(Parser):
             print("ListContent", p[0])
         return ("ListContent", p[0])
 
-    @_('ID', 'Primitive', 'List')
+    @_('Expression', 'List')
     def ListEl(self, p):
         if self.verbose:
             print("ListEl", p[0])
