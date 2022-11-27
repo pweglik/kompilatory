@@ -79,21 +79,31 @@ class SimpleParser(Parser):
         print("PrintStatement")
         return
 
-    # @_('PrefixUnaryOperator PreExpressionPost PostfixUnaryOperator')
-    # def Expression(self, p):
-    #     print("Expression", p[0], p[1], p[2])
-    #     return ("Expression", p[0], p[1], p[2])
+    @_('PrefixUnaryOperator SimpleExpression PostfixUnaryOperator')
+    def Expression(self, p):
+        print("Expression", p[0], p[1], p[2])
+        return ("Expression", p[0], p[1], p[2])
+
+    @_('PrefixUnaryOperator "(" ComplexExpression ")" PostfixUnaryOperator')
+    def Expression(self, p):
+        print("Expression", p[0], p[2], p[4])
+        return ("Expression", p[0], p[2], p[4])
+
+    @_('ComplexExpression')
+    def Expression(self, p):
+        print("Expression", p[0])
+        return ("Expression", p[0])
 
     @_('Expression ComparisonOperator Expression',
         'Expression BinaryOperator Expression')
-    def Expression(self, p):
-        print("Expression", p[0], p[1], [2])
-        return ("Expression", p[0], p[1], [2])
+    def ComplexExpression(self, p):
+        print("ComplexExpression", p[0], p[1], p[2])
+        return ("ComplexExpression", p[0], p[1], p[2])
 
     @_('Matrix', 'Primitive', 'ID')
-    def Expression(self, p):
-        print('Expression', p[0])
-        return ('Expression', p[0])
+    def SimpleExpression(self, p):
+        print('SimpleExpression', p[0])
+        return ('SimpleExpression', p[0])
 
     @_('empty',
         '"[" MatrixAccessRange "," MatrixAccessRange "]"')
@@ -190,7 +200,7 @@ class SimpleParser(Parser):
         print("PrefixUnaryOperator", p[0])
         return ('PrefixUnaryOperator', p[0])
 
-    @_('MAT_TRANS', 'empty')
+    @_('MAT_TRANS', 'MatrixAccess', 'empty')
     def PostfixUnaryOperator(self, p):
         print("PostfixUnaryOperator", p[0])
         return ("PostfixUnaryOperator", p[0])
