@@ -22,7 +22,6 @@ class SimpleLexer(Lexer):
         GREATER_EQ,
         NOT_EQ,
         EQ,
-        BLOCK_STARTER,
         MAT_TRANS,
         IF,
         ELSE,
@@ -41,7 +40,7 @@ class SimpleLexer(Lexer):
         STRING,
     }
 
-    literals = { '(', ')', '[', ']', '{', '}', ',', ';' }
+    literals = { '(', ')', '[', ']', '{', '}', ',', ':', ';' }
 
     # Regular expression rules for tokens
     ASS_ADD         = r'\+\='
@@ -65,7 +64,6 @@ class SimpleLexer(Lexer):
     ASS             = r'\='
     MAT_TRANS       = r'\''
 
-    BLOCK_STARTER   = r'\:'
     IF              = r'if'
     ELSE            = r'else'
     FOR             = r'for'
