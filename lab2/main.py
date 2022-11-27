@@ -4,9 +4,9 @@ from lexer import SimpleLexer
 def draw_ast(node):
     if node[0] == "Statement":
         print("\n\n")
-
-    print(node)
-    if not isinstance(node[1], str):
+        print(node)
+        
+    if node[0] == "Program" or node[0] == "StatementList":
         for el in node[1:]:
             if el is not None:
                 draw_ast(el)
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text = '''
-    
+    y = 5;
     A[1,3] = 0 ;
 
     '''
