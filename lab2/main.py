@@ -17,10 +17,9 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text = '''
-    for i = 1:N
-    for j = 1:M
-    print i,j;
+        a + b * c;
 
+        a * b + c;
     '''
 
     tokens = lexer.tokenize(text)

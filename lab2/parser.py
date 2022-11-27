@@ -9,12 +9,6 @@ scanner_obj = SimpleLexer()
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
     verbose = False
-    
-    # precedence = (
-    #     ('left', ADD, SUB),
-    #     ('left', MUL, DIV),
-    #     ('right', SUB),
-    # )
 
     @_('StatementList')
     def Program(self, p):
