@@ -100,11 +100,20 @@ class SimpleParser(Parser):
         return ("JumpStatement", p[0], p[1])
 
 
-    @_('PRINT Expression')
+    # @_('PRINT Expression')
+    # def PrintStatement(self, p):
+    #     if self.verbose:
+    #         print("PrintStatement", p[1])
+    #     return ("PrintStatement", p[1])
+
+
+    @_('PRINT ListContent')
     def PrintStatement(self, p):
         if self.verbose:
-            print("PrintStatement", p[0])
-        return ("PrintStatement", p[0])
+            print("PrintStatement", p[1])
+        return ("PrintStatement", p[1])
+
+
 
     @_('PrefixUnaryOperator SimpleExpression PostfixUnaryOperator')
     def Expression(self, p):
