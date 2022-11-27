@@ -6,7 +6,9 @@ if __name__ == '__main__':
     lexer = SimpleLexer()
     parser = SimpleParser()
 
-    text = '''-a + 5;'''
+    text = '''
+    a + 5;
+    '''
 
     tokens = lexer.tokenize(text)
     for t in lexer.tokenize(text):

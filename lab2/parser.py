@@ -114,49 +114,65 @@ class SimpleParser(Parser):
         print('SimpleExpression', p[0])
         return ('SimpleExpression', p[0])
 
-    @_('empty',
-        '"[" MatrixAccessRange "," MatrixAccessRange "]"')
+    @_('"[" MatrixAccessRange "," MatrixAccessRange "]"')
     def MatrixAccess(self, p):
         print("MatrixAccess")
         return
 
-    @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement',
-        'MatrixAccessRangeElement')
+    @_('empty')
+    def MatrixAccess(self, p):
+        print("MatrixAccess", p[0])
+        return ("MatrixAccess", p[0])
+
+    @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement')
     def MatrixAccessRange(self, p):
-        print("MatrixAccessRange")
-        return
+        print("MatrixAccessRange", p[0], p[2])
+        return ("MatrixAccessRange", p[0], p[2])
+
+    @_('MatrixAccessRangeElement')
+    def MatrixAccessRange(self, p):
+        print("MatrixAccessRange", p[0])
+        return ("MatrixAccessRange", p[0])
 
     @_('INT', 'ID')
     def MatrixAccessRangeElement(self, p):
-        print("MatrixAccessRangeElement")
-        return
+        print("MatrixAccessRangeElement", p[0])
+        return ("MatrixAccessRangeElement", p[0])
 
-    @_('RangeElement ":" RangeElement',
-        'RangeElement ":" RangeElement ":" RangeElement')
+    @_('RangeElement ":" RangeElement')
     def Range(self, p):
-        print("Range")
-        return
+        print("Range", p[0], p[2])
+        return ("Range", p[0], p[2])
+
+    @_('RangeElement ":" RangeElement ":" RangeElement')
+    def Range(self, p):
+        print("Range", p[0], p[2], p[4])
+        return ("Range", p[0], p[2], p[4])
 
     @_('Number', 'ID')
     def RangeElement(self, p):
-        print("v")
-        return
+        print("RangeElement", p[0])
+        return ("RangeElement", p[0])
 
     @_('"[" ListContent "]"')
     def List(self, p):
-        print("List")
-        return
+        print("List", p[1])
+        return ("List", p[1])
 
-    @_('ListEl "," ListContent',
-        'empty')
+    @_('ListEl "," ListContent')
     def ListContent(self, p):
-        print("ListContent")
-        return
+        print("ListContent", p[0], p[2])
+        return ("ListEl", p[0], p[2])
+
+    @_('empty')
+    def ListContent(self, p):
+        print("ListContent", p[0])
+        return ("ListEl", p[0])
 
     @_('ID', 'Primitive', 'List')
     def ListEl(self, p):
-        print("ListEl")
-        return
+        print("ListEl", p[0])
+        return ("ListEl", p[0])
 
     @_('Number',
         'STRING')
@@ -166,22 +182,30 @@ class SimpleParser(Parser):
 
     @_('ZEROS "(" INT ")"',
         'ONES "(" INT ")"',
-        'EYE "(" INT ")"',
-        '"[" MatrixRowList "]"')
+        'EYE "(" INT ")"')
     def Matrix(self, p):
-        print("Matrix")
-        return
+        print("Matrix", p[0], p[2])
+        return ("Matrix", p[0], p[2])
 
+    @_('"[" MatrixRowList "]"')
+    def Matrix(self, p):
+        print("Matrix", p[1])
+        return ("Matrix", p[1])
     
-    @_('"[" MatrixRow "]" "," MatrixRowList', 'empty', )
+    @_('"[" MatrixRow "]" "," MatrixRowList')
     def MatrixRowList(self, p):
-        print("MatrixRowList")
-        return
+        print("MatrixRowList", p[1], p[4])
+        return print("MatrixRowList", p[1], p[4])
+
+    @_('empty')
+    def MatrixRowList(self, p):
+        print("MatrixRowList", p[0])
+        return print("MatrixRowList", p[0])
 
     @_('Number "," MatrixRow', 'empty')
     def MatrixRow(self, p):
-        print("MatrixRow")
-        return
+        print("MatrixRow", p[0])
+        return print("MatrixRow", p[0])
 
     @_('ADD', 'SUB', 'MUL', 'DIV', 
     'ADD_EL','SUB_EL', 'MUL_EL', 'DIV_EL')
