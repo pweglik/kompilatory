@@ -17,12 +17,13 @@ class SimpleParser(Parser):
 
     @_('')
     def empty(self, p):
-        print('empty')
+        print("empty")
         return
 
     @_('StatementList Statement',
         'empty')
     def StatementList(self, p):
+        print("StatementList")
         return
 
     @_('CompoundStatement',
@@ -33,27 +34,31 @@ class SimpleParser(Parser):
         'AssignmentStatement ";"',
         'ExpressionStatement')
     def Statement(self, p):
+        print("Statement")
         return
 
     
     @_('"{" StatementList "}"')
     def CompoundStatement(self, p):
+        print("CompoundStatement")
         return
 
     @_('Expression')
     def ExpressionStatement(self, p):
-        print('Expression')
+        print("ExpressionStatement")
         return
 
     @_('IF "(" Expression ")" Statement',
         'IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
+        print("SelectionStatement")
         return
 
     @_('WHILE "(" Expression ")" Statement',
         'FOR ID ASS Range Statement',
         'FOR ID ASS List Statement')
     def IterationStatement(self, p):
+        print("IterationStatement")
         return
 
 
@@ -61,11 +66,13 @@ class SimpleParser(Parser):
         'CONTINUE',
         'RETURN Expression')
     def JumpStatement(self, p):
+        print("JumpStatement")
         return
 
 
     @_('PRINT Expression')
     def PrintStatement(self, p):
+        print("PrintStatement")
         return
 
     @_('Expression ComparisonOperator Expression',
@@ -76,48 +83,57 @@ class SimpleParser(Parser):
         'Primitive',
         'ID')
     def Expression(self, p):
-        print('ExpressionStatement')
+        print("Expression")
         return
 
     @_('empty',
         '"[" MatrixAccessRange "," MatrixAccessRange "]"')
     def MatrixAccess(self, p):
+        print("MatrixAccess")
         return
 
     @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement',
         'MatrixAccessRangeElement')
     def MatrixAccessRange(self, p):
+        print("MatrixAccessRange")
         return
 
     @_('INT', 'ID')
     def MatrixAccessRangeElement(self, p):
+        print("MatrixAccessRangeElement")
         return
 
     @_('RangeElement ":" RangeElement',
         'RangeElement ":" RangeElement ":" RangeElement')
     def Range(self, p):
+        print("Range")
         return
 
     @_('Number', 'ID')
     def RangeElement(self, p):
+        print("v")
         return
 
     @_('"[" ListContent "]"')
     def List(self, p):
+        print("List")
         return
 
     @_('ListEl "," ListContent',
         'empty')
     def ListContent(self, p):
+        print("ListContent")
         return
 
     @_('ID', 'Primitive', 'List')
     def ListEl(self, p):
+        print("ListEl")
         return
 
     @_('Number',
         'STRING')
     def Primitive(self, p):
+        print("Primitive")
         return
 
     @_('ZEROS "(" INT ")"',
@@ -125,45 +141,55 @@ class SimpleParser(Parser):
         'EYE "(" INT ")"',
         '"[" MatrixRowList "]"')
     def Matrix(self, p):
+        print("Matrix")
         return
 
     
     @_('"[" MatrixRow "]" "," MatrixRowList', 'empty', )
     def MatrixRowList(self, p):
+        print("MatrixRowList")
         return
 
     @_('Number "," MatrixRow', 'empty')
     def MatrixRow(self, p):
+        print("MatrixRow")
         return
 
     @_('ADD', 'SUB', 'MUL', 'DIV', 
     'ADD_EL','SUB_EL', 'MUL_EL', 'DIV_EL')
     def BinaryOperator(self, p):
+        print("BinaryOperator")
         return
 
     @_('ID AssignmentOperator Expression', 
         'ID MatrixAccess AssignmentOperator Expression')
     def AssignmentStatement(self, p):
+        print("AssignmentStatement")
         return
 
     @_('ASS', 'ASS_ADD', 'ASS_SUB', 'ASS_DIV', 'ASS_MUL')
     def AssignmentOperator(self, p):
+        print("AssignmentOperator")
         return
 
     @_('SUB', 'empty')
     def PrefixUnaryOperator(self, p):
+        print("PrefixUnaryOperator")
         return
 
     @_('MAT_TRANS', 'empty')
     def PostfixUnaryOperator(self, p):
+        print("PostfixUnaryOperator")
         return
 
     @_('INT', 'FLOAT')
     def Number(self, p):
+        print("Number")
         return
 
     @_('EQ', 'LESS_EQ', 'GREATER_EQ', 'NOT_EQ', 'GREATER', 'LESS')
     def ComparisonOperator(self, p):
+        print("ComparisonOperator")
         return
 
 
