@@ -8,8 +8,12 @@ scanner_obj = SimpleLexer()
 
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
-    debugfile = "parser.out"
     
+    # precedence = (
+    #     ('left', ADD, SUB),
+    #     ('left', MUL, DIV),
+    #     ('right', SUB),
+    # )
 
     @_('StatementList')
     def Program(self, p):
@@ -81,13 +85,18 @@ class SimpleParser(Parser):
 
     @_('PrefixUnaryOperator SimpleExpression PostfixUnaryOperator')
     def Expression(self, p):
-        print("Expression", p[0], p[1], p[2])
-        return ("Expression", p[0], p[1], p[2])
+        print("Expression",  p[0], p[1], p[2])
+        return ("Expression",  p[0], p[1], p[2])
+
+    @_('SimpleExpression PostfixUnaryOperator')
+    def Expression(self, p):
+        print("Expression",  p[0], p[1])
+        return ("Expression",  p[0], p[1])
 
     @_('PrefixUnaryOperator "(" ComplexExpression ")" PostfixUnaryOperator')
     def Expression(self, p):
         print("Expression", p[0], p[2], p[4])
-        return ("Expression", p[0], p[2], p[4])
+        return ("Expression",  p[0], p[2], p[4])
 
     @_('ComplexExpression')
     def Expression(self, p):
