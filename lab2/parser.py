@@ -126,8 +126,8 @@ class SimpleParser(Parser):
 
     @_('"[" MatrixAccessRange "," MatrixAccessRange "]"')
     def MatrixAccess(self, p):
-        print("MatrixAccess")
-        return
+        print("MatrixAccess", p[1], p[3])
+        return ("MatrixAccess", p[1], p[3])
 
     @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement')
     def MatrixAccessRange(self, p):

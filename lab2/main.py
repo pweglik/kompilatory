@@ -17,15 +17,9 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text = '''
-    # initialize 3x3 matrix with specific values
-    E1 = [ [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9] ] ;
-
+    
     A[1,3] = 0 ;
 
-    x = 2;
-    y = 2.5;
     '''
 
     tokens = lexer.tokenize(text)
