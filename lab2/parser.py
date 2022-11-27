@@ -31,8 +31,8 @@ class SimpleParser(Parser):
 
     @_('empty')
     def StatementList(self, p):
-        print("StatementList")
-        return
+        print("StatementList", p[0])
+        return ("StatementList", p[0])
 
     @_('CompoundStatement',
         'SelectionStatement',
@@ -48,40 +48,50 @@ class SimpleParser(Parser):
     
     @_('"{" StatementList "}"')
     def CompoundStatement(self, p):
-        print("CompoundStatement")
-        return
+        print("CompoundStatement", p[1])
+        return ("CompoundStatement", p[1])
 
     @_('Expression')
     def ExpressionStatement(self, p):
         print("ExpressionStatement", p[0])
         return ("ExpressionStatement", p[0])
 
-    @_('IF "(" Expression ")" Statement',
-        'IF "(" Expression ")" Statement ELSE Statement')
+    @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
-        print("SelectionStatement")
-        return
+        print("SelectionStatement", p[2], p[4], p[6])
+        return ("SelectionStatement", p[2], p[4], p[6])
+
+    @_('IF "(" Expression ")" Statement')
+    def SelectionStatement(self, p):
+        print("SelectionStatement", p[2], p[4])
+        return ("SelectionStatement", p[2], p[4])
+
 
     @_('WHILE "(" Expression ")" Statement',
         'FOR ID ASS Range Statement',
         'FOR ID ASS List Statement')
     def IterationStatement(self, p):
-        print("IterationStatement")
-        return
+        print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
+        return ("IterationStatement", p[0], p[1], p[2], p[3], p[4])
 
 
     @_('BREAK',
-        'CONTINUE',
+        'CONTINUE')
+    def JumpStatement(self, p):
+        print("JumpStatement", p[0])
+        return ("JumpStatement", p[0])
+
+    @_(
         'RETURN Expression')
     def JumpStatement(self, p):
-        print("JumpStatement")
-        return
+        print("JumpStatement", p[0], p[1])
+        return ("JumpStatement", p[0], p[1])
 
 
     @_('PRINT Expression')
     def PrintStatement(self, p):
-        print("PrintStatement")
-        return
+        print("PrintStatement", p[0])
+        return ("PrintStatement", p[0])
 
     @_('PrefixUnaryOperator SimpleExpression PostfixUnaryOperator')
     def Expression(self, p):
@@ -118,11 +128,6 @@ class SimpleParser(Parser):
     def MatrixAccess(self, p):
         print("MatrixAccess")
         return
-
-    @_('empty')
-    def MatrixAccess(self, p):
-        print("MatrixAccess", p[0])
-        return ("MatrixAccess", p[0])
 
     @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement')
     def MatrixAccessRange(self, p):
@@ -191,12 +196,12 @@ class SimpleParser(Parser):
     def Matrix(self, p):
         print("Matrix", p[1])
         return ("Matrix", p[1])
-    
+
     @_('"[" MatrixRow "]" "," MatrixRowList')
     def MatrixRowList(self, p):
         print("MatrixRowList", p[1], p[4])
         return print("MatrixRowList", p[1], p[4])
-
+    
     @_('empty')
     def MatrixRowList(self, p):
         print("MatrixRowList", p[0])
@@ -245,7 +250,7 @@ class SimpleParser(Parser):
 
     @_('EQ', 'LESS_EQ', 'GREATER_EQ', 'NOT_EQ', 'GREATER', 'LESS')
     def ComparisonOperator(self, p):
-        print("ComparisonOperator")
+        print("ComparisonOperator", p[0])
         return ('ComparisonOperator', p[0])
 
 
