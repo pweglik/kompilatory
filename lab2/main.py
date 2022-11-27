@@ -17,8 +17,7 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text = '''
-    y = 5;
-    A[1,3] = 0 ;
+    a+b+c ;
 
     '''
 
