@@ -9,23 +9,26 @@ scanner_obj = SimpleLexer()
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
     verbose = False
+    debugfile='debug.log'
     
+
     precedence = (
-        ('left', LESS, GREATER, LESS_EQ, GREATER_EQ),
-        ('left', EQ, NOT_EQ),
+        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS),
         ('left', ADD, SUB),
         ('left', MUL, DIV),
+        ('right', UMINUS),
+        ('left', MAT_ACCESS, MAT_TRANS),
     )
 
     @_('StatementList')
     def Program(self, p):
         return ('Program', p[0])
 
-    @_('')
-    def empty(self, p):
-        if self.verbose:
-            print("empty")
-        return
+    # @_('')
+    # def empty(self, p):
+    #     if self.verbose:
+    #         print("empty")
+    #     return
 
     @_('Statement StatementList')
     def StatementList(self, p):
@@ -101,13 +104,6 @@ class SimpleParser(Parser):
         return ("JumpStatement", p[0], p[1])
 
 
-    # @_('PRINT Expression')
-    # def PrintStatement(self, p):
-    #     if self.verbose:
-    #         print("PrintStatement", p[1])
-    #     return ("PrintStatement", p[1])
-
-
     @_('PRINT ListContent')
     def PrintStatement(self, p):
         if self.verbose:
@@ -116,42 +112,64 @@ class SimpleParser(Parser):
 
 
 
-    @_('PrefixUnaryOperator SimpleExpression PostfixUnaryOperator')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @_(
+        'Expression ADD Expression',
+        'Expression SUB Expression',
+        'Expression MUL Expression',
+        'Expression DIV Expression',
+        'Expression ADD_EL Expression',
+        'Expression SUB_EL Expression',
+        'Expression MUL_EL Expression',
+        'Expression DIV_EL Expression',
+        'Expression EQ Expression',
+        'Expression NOT_EQ Expression',
+        'Expression LESS_EQ Expression',
+        'Expression GREATER_EQ Expression',
+        'Expression GREATER Expression',
+        'Expression LESS Expression',
+        '"(" Expression ")"',
+        )
     def Expression(self, p):
         if self.verbose:
-            print("Expression",  p[0], p[1], p[2])
-        return ("Expression",  p[0], p[1], p[2])
+            print("Expression", p[0], p[1], p[2])
+        return ("Expression", p[0], p[1], p[2])
 
-    @_('SimpleExpression PostfixUnaryOperator')
+
+    @_('SUB Expression %prec UMINUS',
+        'Expression MAT_TRANS',
+        'Expression MatrixAccess %prec MAT_ACCESS'
+        )
     def Expression(self, p):
         if self.verbose:
-            print("Expression",  p[0], p[1])
-        return ("Expression",  p[0], p[1])
+            print('Expression', p[0], p[1])
+        return ('Expression', p[0], p[1])
 
-    @_('PrefixUnaryOperator "(" ComplexExpression ")" PostfixUnaryOperator')
-    def Expression(self, p):
-        if self.verbose:
-            print("Expression", p[0], p[2], p[4])
-        return ("Expression",  p[0], p[2], p[4])
-
-    @_('ComplexExpression')
-    def Expression(self, p):
-        if self.verbose:
-            print("Expression", p[0])
-        return ("Expression", p[0])
-
-    @_('Expression ComparisonOperator Expression',
-        'Expression BinaryOperator Expression')
-    def ComplexExpression(self, p):
-        if self.verbose:
-            print("ComplexExpression", p[0], p[1], p[2])
-        return ("ComplexExpression", p[0], p[1], p[2])
 
     @_('Matrix', 'Primitive', 'ID')
-    def SimpleExpression(self, p):
+    def Expression(self, p):
         if self.verbose:
-            print('SimpleExpression', p[0])
-        return ('SimpleExpression', p[0])
+            print('Expression', p[0])
+        return ('Expression', p[0])
+
+
+
+
+
+
 
     @_('"[" MatrixAccessRange "," MatrixAccessRange "]"')
     def MatrixAccess(self, p):
@@ -266,13 +284,6 @@ class SimpleParser(Parser):
 
         return ("MatrixRow", p[0])
 
-    @_('ADD', 'SUB', 'MUL', 'DIV', 
-    'ADD_EL','SUB_EL', 'MUL_EL', 'DIV_EL')
-    def BinaryOperator(self, p):
-        if self.verbose:
-            print("BinaryOperator", p[0])
-        return ("BinaryOperator", p[0])
-
     @_('ID AssignmentOperator Expression')
     def AssignmentStatement(self, p):
         if self.verbose:
@@ -291,17 +302,6 @@ class SimpleParser(Parser):
             print("AssignmentOperator", p[0])
         return ("AssignmentOperator", p[0])
 
-    @_('SUB', 'empty')
-    def PrefixUnaryOperator(self, p):
-        if self.verbose:
-            print("PrefixUnaryOperator", p[0])
-        return ('PrefixUnaryOperator', p[0])
-
-    @_('MAT_TRANS', 'MatrixAccess', 'empty')
-    def PostfixUnaryOperator(self, p):
-        if self.verbose:
-            print("PostfixUnaryOperator", p[0])
-        return ("PostfixUnaryOperator", p[0])
 
     @_('INT', 'FLOAT')
     def Number(self, p):
@@ -309,10 +309,7 @@ class SimpleParser(Parser):
             print("Number", p[0])
         return ('Number', p[0])
 
-    @_('EQ', 'LESS_EQ', 'GREATER_EQ', 'NOT_EQ', 'GREATER', 'LESS')
-    def ComparisonOperator(self, p):
-        if self.verbose:
-            print("ComparisonOperator", p[0])
-        return ('ComparisonOperator', p[0])
 
 
+
+# @addToClass

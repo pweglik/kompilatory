@@ -4,3 +4,7 @@ to będzie później wzięty pod uwage (przez co będzie niżej w drzewie, a wi�
 
 Kolejny problem z zagnieźdżonymi ifami:
 Do którego ifa dopasujemy else'a?
+
+usunąc produkcje empty
+uprościć range fora
+precedence dla przypisania

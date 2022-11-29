@@ -85,7 +85,8 @@ a + b * c;
 
     tokens = lexer.tokenize(text)
     for t in lexer.tokenize(text):
-        print(t)
+        # print(t)
+        pass
     result = parser.parse(tokens)
     # print(f'\n{result}')
     draw_ast(result)
