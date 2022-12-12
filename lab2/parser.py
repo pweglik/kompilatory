@@ -12,14 +12,12 @@ class SimpleParser(Parser):
     debugfile='debug.log'
 
     precedence = (
-        # ('nonassoc', JUST_ID),
         ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC, NO_MORE_LIST_ACCESS),
         ('nonassoc', ELSE, ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
         ('left', ADD, SUB, ADD_EL, SUB_EL),
         ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
-        ('left', LIST_ACCESS_LOW),
-        ('left', LIST_ACCESS, MAT_TRANS),
+        ('left', LIST_ACCESS, MAT_TRANS, MORE_LIST_ACCESS),
     )
 
     @_('StatementList')
@@ -124,7 +122,7 @@ class SimpleParser(Parser):
 
     @_('SUB Expression %prec UMINUS',
         'Expression MAT_TRANS',
-        'Expression ListAccess %prec LIST_ACCESS_LOW'
+        'Expression ListAccess'
         )
     def Expression(self, p):
         if self.verbose:
@@ -147,7 +145,7 @@ class SimpleParser(Parser):
             print("ListAccess", p[1])
         return ("ListAccess", p[1])
 
-    @_('"[" ListAccessElement "]" ListAccess')
+    @_('"[" ListAccessElement "]" ListAccess %prec MORE_LIST_ACCESS')
     def ListAccess(self, p):
         if self.verbose:
             print("ListAccess", p[1], p[3])
