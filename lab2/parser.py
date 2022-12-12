@@ -110,22 +110,6 @@ class SimpleParser(Parser):
             print("PrintStatement", p[1])
         return ("PrintStatement", p[1])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @_(
         'Expression ADD Expression',
         'Expression SUB Expression',
@@ -151,7 +135,7 @@ class SimpleParser(Parser):
 
     @_('SUB Expression %prec UMINUS',
         'Expression MAT_TRANS',
-        'Expression MatrixAccess %prec MAT_ACCESS'
+        'Expression ListAccess %prec MAT_ACCESS'
         )
     def Expression(self, p):
         if self.verbose:
@@ -159,41 +143,35 @@ class SimpleParser(Parser):
         return ('Expression', p[0], p[1])
 
 
-    @_('Matrix', 'Primitive', 'ID')
+    @_('List', 'Primitive', 'ID', 'MatrixFunctions')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
         return ('Expression', p[0])
 
-
-
-
-
-
-
-    @_('"[" MatrixAccessRange "," MatrixAccessRange "]"')
-    def MatrixAccess(self, p):
+    @_('"[" ListAccessContent "]"')
+    def ListAccess(self, p):
         if self.verbose:
-            print("MatrixAccess", p[1], p[3])
-        return ("MatrixAccess", p[1], p[3])
+            print("ListAccess", p[1])
+        return ("ListAccess", p[1])
 
-    @_('MatrixAccessRangeElement ":" MatrixAccessRangeElement')
-    def MatrixAccessRange(self, p):
+    @_('ListAccessElement')
+    def ListAccessContent(self, p):
         if self.verbose:
-            print("MatrixAccessRange", p[0], p[2])
-        return ("MatrixAccessRange", p[0], p[2])
+            print("ListAccessContent", p[0])
+        return ("ListAccessContent", p[0])
 
-    @_('MatrixAccessRangeElement')
-    def MatrixAccessRange(self, p):
+    @_('ListAccessElement "," ListAccessContent')
+    def ListAccessContent(self, p):
         if self.verbose:
-            print("MatrixAccessRange", p[0])
-        return ("MatrixAccessRange", p[0])
+            print("ListAccessContent", p[0], p[2])
+        return ("ListAccessContent", p[0], p[2])
 
     @_('INT', 'ID')
-    def MatrixAccessRangeElement(self, p):
+    def ListAccessElement(self, p):
         if self.verbose:
-            print("MatrixAccessRangeElement", p[0])
-        return ("MatrixAccessRangeElement", p[0])
+            print("ListAccessElement", p[0])
+        return ("ListAccessElement", p[0])
 
     @_('RangeElement ":" RangeElement')
     def Range(self, p):
@@ -247,42 +225,10 @@ class SimpleParser(Parser):
     @_('ZEROS "(" INT ")"',
         'ONES "(" INT ")"',
         'EYE "(" INT ")"')
-    def Matrix(self, p):
+    def MatrixFunctions(self, p):
         if self.verbose:
             print("Matrix", p[0], p[2])
         return ("Matrix", p[0], p[2])
-
-    @_('"[" MatrixRowList "]"')
-    def Matrix(self, p):
-        if self.verbose:
-            print("Matrix", p[1])
-        return ("Matrix", p[1])
-
-    @_('"[" MatrixRow "]" "," MatrixRowList')
-    def MatrixRowList(self, p):
-        if self.verbose:
-            print("MatrixRowList", p[1], p[4])
-        return ("MatrixRowList", p[1], p[4])
-
-    @_('"[" MatrixRow "]"')
-    def MatrixRowList(self, p):
-        if self.verbose:
-            print("MatrixRowList", p[1])
-        return ("MatrixRowList", p[1])
-
-    @_('Number "," MatrixRow')
-    def MatrixRow(self, p):
-        if self.verbose:
-            print("MatrixRow", p[0], p[2])
-
-        return ("MatrixRow", p[0], p[2])
-
-    @_('Number')
-    def MatrixRow(self, p):
-        if self.verbose:
-            print("MatrixRow", p[0])
-
-        return ("MatrixRow", p[0])
 
     @_('ID ASS Expression',
     'ID ASS_ADD Expression',
@@ -294,24 +240,8 @@ class SimpleParser(Parser):
             print("AssignmentStatement", p[0], p[1], p[2])
         return ("AssignmentStatement", p[0], p[1], p[2])
 
-    @_('ID MatrixAccess ASS Expression',
-    'ID MatrixAccess ASS_ADD Expression',
-    'ID MatrixAccess ASS_SUB Expression',
-    'ID MatrixAccess ASS_MUL Expression',
-    'ID MatrixAccess ASS_DIV Expression')
-    def AssignmentStatement(self, p):
-        if self.verbose:
-            print("AssignmentStatement", p[0], p[1], p[2], p[3])
-        return ("AssignmentStatement", p[0], p[1], p[2], p[3])
-
-
     @_('INT', 'FLOAT')
     def Number(self, p):
         if self.verbose:
             print("Number", p[0])
         return ('Number', p[0])
-
-
-
-
-# @addToClass
