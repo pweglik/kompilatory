@@ -10,15 +10,15 @@ class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
     verbose = False
     debugfile='debug.log'
-    
 
     precedence = (
-        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC),
-        ('nonassoc', ELSE),
+        # ('nonassoc', JUST_ID),
+        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC, NO_MORE_LIST_ACCESS),
+        ('nonassoc', ELSE, ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
         ('left', ADD, SUB, ADD_EL, SUB_EL),
         ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
-        ('left', MAT_TRANS),
+        ('left', LIST_ACCESS, MAT_TRANS),
     )
 
     @_('StatementList')
@@ -69,7 +69,8 @@ class SimpleParser(Parser):
         return ("SelectionStatement", p[2], p[4], p[6])
 
     @_('WHILE "(" Expression ")" Statement',
-        'FOR ID ASS Range Statement')
+        'FOR ID ASS Range Statement',
+        'FOR ID ASS List Statement')
     def IterationStatement(self, p):
         if self.verbose:
             print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
@@ -91,7 +92,7 @@ class SimpleParser(Parser):
         return ("JumpStatement", p[0], p[1])
 
 
-    @_('PRINT Expression')
+    @_('PRINT ListContent')
     def PrintStatement(self, p):
         if self.verbose:
             print("PrintStatement", p[1])
@@ -122,18 +123,36 @@ class SimpleParser(Parser):
 
     @_('SUB Expression %prec UMINUS',
         'Expression MAT_TRANS',
+        'Expression ListAccess %prec LIST_ACCESS'
         )
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0], p[1])
         return ('Expression', p[0], p[1])
 
-
-    @_('Primitive', 'ID', 'MatrixFunctions')
+    @_('List', 'Primitive', 'ID', 'MatrixFunctions')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
         return ('Expression', p[0])
+
+    @_('"[" ListAccessElement "]" %prec NO_MORE_LIST_ACCESS')
+    def ListAccess(self, p):
+        if self.verbose:
+            print("ListAccess", p[1])
+        return ("ListAccess", p[1])
+
+    @_('"[" ListAccessElement "]" ListAccess')
+    def ListAccess(self, p):
+        if self.verbose:
+            print("ListAccess", p[1], p[3])
+        return ("ListAccess", p[1], p[3])
+
+    @_('INT', 'ID')
+    def ListAccessElement(self, p):
+        if self.verbose:
+            print("ListAccessElement", p[0])
+        return ("ListAccessElement", p[0])
 
     @_('RangeElement ":" RangeElement')
     def Range(self, p):
@@ -152,6 +171,24 @@ class SimpleParser(Parser):
         if self.verbose:
             print("RangeElement", p[0])
         return ("RangeElement", p[0])
+
+    @_('"[" ListContent "]"')
+    def List(self, p):
+        if self.verbose:
+            print("List", p[1])
+        return ("List", p[1])
+
+    @_('Expression "," ListContent')
+    def ListContent(self, p):
+        if self.verbose:
+            print("ListContent", p[0], p[2])
+        return ("ListContent", p[0], p[2])
+
+    @_('Expression')
+    def ListContent(self, p):
+        if self.verbose:
+            print("ListContent", p[0])
+        return ("ListContent", p[0])
 
     @_('Number',
         'STRING')
@@ -172,7 +209,12 @@ class SimpleParser(Parser):
     'ID ASS_ADD Expression',
     'ID ASS_SUB Expression',
     'ID ASS_DIV Expression',
-    'ID ASS_MUL Expression',)
+    'ID ASS_MUL Expression',
+    'ID ListAccess ASS Expression',
+    'ID ListAccess ASS_ADD Expression',
+    'ID ListAccess ASS_SUB Expression',
+    'ID ListAccess ASS_DIV Expression',
+    'ID ListAccess ASS_MUL Expression',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])

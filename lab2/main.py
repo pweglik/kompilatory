@@ -2,7 +2,6 @@ from parser import SimpleParser
 from lexer import SimpleLexer
 
 def draw_ast(node):
-    print(node)
     if node[0] == "Statement":
         print("\n\n")
         print(node)
@@ -84,17 +83,11 @@ a * b + c;
 a + b * c;
     '''
 
-    text = '''
-    if(i < 1) 
-        if (j == 2) 
-            a = 3;
-        else
-        {
-            c = 4;
-        }
-    else 
-        b = 2;
 
+    text='''
+    # a = [1, 2 , [3, 4]];
+    # c = a[1][2];
+    b[5] = 7;
     '''
     
     tokens = lexer.tokenize(text)
