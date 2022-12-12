@@ -284,23 +284,25 @@ class SimpleParser(Parser):
 
         return ("MatrixRow", p[0])
 
-    @_('ID AssignmentOperator Expression')
+    @_('ID ASS Expression',
+    'ID ASS_ADD Expression',
+    'ID ASS_SUB Expression',
+    'ID ASS_DIV Expression',
+    'ID ASS_MUL Expression',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
         return ("AssignmentStatement", p[0], p[1], p[2])
 
-    @_('ID MatrixAccess AssignmentOperator Expression')
+    @_('ID MatrixAccess ASS Expression',
+    'ID MatrixAccess ASS_ADD Expression',
+    'ID MatrixAccess ASS_SUB Expression',
+    'ID MatrixAccess ASS_MUL Expression',
+    'ID MatrixAccess ASS_DIV Expression')
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2], p[3])
         return ("AssignmentStatement", p[0], p[1], p[2], p[3])
-
-    @_('ASS', 'ASS_ADD', 'ASS_SUB', 'ASS_DIV', 'ASS_MUL')
-    def AssignmentOperator(self, p):
-        if self.verbose:
-            print("AssignmentOperator", p[0])
-        return ("AssignmentOperator", p[0])
 
 
     @_('INT', 'FLOAT')
