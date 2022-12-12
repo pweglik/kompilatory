@@ -14,7 +14,7 @@ class SimpleParser(Parser):
 
     precedence = (
         ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC),
-        ('nonassoc', IF_ELSE_PREC),
+        ('nonassoc', ELSE),
         ('left', ADD, SUB, ADD_EL, SUB_EL),
         ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
@@ -24,12 +24,6 @@ class SimpleParser(Parser):
     @_('StatementList')
     def Program(self, p):
         return ('Program', p[0])
-
-    # @_('')
-    # def empty(self, p):
-    #     if self.verbose:
-    #         print("empty")
-    #     return
 
     @_('Statement StatementList')
     def StatementList(self, p):
@@ -62,18 +56,17 @@ class SimpleParser(Parser):
             print("CompoundStatement", p[1])
         return ("CompoundStatement", p[1])
 
-    @_('IF "(" Expression ")" Statement ELSE Statement %prec IF_ELSE_PREC')
-    def SelectionStatement(self, p):
-        if self.verbose:
-            print("SelectionStatement", p[2], p[4], p[6])
-        return ("SelectionStatement", p[2], p[4], p[6])
-
     @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4])
         return ("SelectionStatement", p[2], p[4])
-
+    
+    @_('IF "(" Expression ")" Statement ELSE Statement')
+    def SelectionStatement(self, p):
+        if self.verbose:
+            print("SelectionStatement", p[2], p[4], p[6])
+        return ("SelectionStatement", p[2], p[4], p[6])
 
     @_('WHILE "(" Expression ")" Statement',
         'FOR ID ASS Range Statement')
