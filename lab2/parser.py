@@ -15,8 +15,8 @@ class SimpleParser(Parser):
     precedence = (
         ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC),
         ('nonassoc', IF_ELSE_PREC),
-        ('left', ADD, SUB),
-        ('left', MUL, DIV),
+        ('left', ADD, SUB, ADD_EL, SUB_EL),
+        ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
         ('left', LIST_ACCESS, MAT_TRANS),
     )
