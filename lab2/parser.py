@@ -18,6 +18,7 @@ class SimpleParser(Parser):
         ('left', ADD, SUB, ADD_EL, SUB_EL),
         ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
+        ('left', LIST_ACCESS_LOW),
         ('left', LIST_ACCESS, MAT_TRANS),
     )
 
@@ -123,14 +124,18 @@ class SimpleParser(Parser):
 
     @_('SUB Expression %prec UMINUS',
         'Expression MAT_TRANS',
-        'Expression ListAccess %prec LIST_ACCESS'
+        'Expression ListAccess %prec LIST_ACCESS_LOW'
         )
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0], p[1])
         return ('Expression', p[0], p[1])
 
-    @_('List', 'Primitive', 'ID', 'MatrixFunctions')
+    @_('List', 
+    'Primitive', 
+    'ID', 
+    # 'ID %prec JUST_ID', 
+    'MatrixFunctions')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
@@ -210,11 +215,11 @@ class SimpleParser(Parser):
     'ID ASS_SUB Expression',
     'ID ASS_DIV Expression',
     'ID ASS_MUL Expression',
-    'ID ListAccess ASS Expression',
-    'ID ListAccess ASS_ADD Expression',
-    'ID ListAccess ASS_SUB Expression',
-    'ID ListAccess ASS_DIV Expression',
-    'ID ListAccess ASS_MUL Expression',)
+    'ID ListAccess ASS Expression %prec LIST_ACCESS', 
+    'ID ListAccess ASS_ADD Expression %prec LIST_ACCESS',
+    'ID ListAccess ASS_SUB Expression %prec LIST_ACCESS',
+    'ID ListAccess ASS_DIV Expression %prec LIST_ACCESS',
+    'ID ListAccess ASS_MUL Expression %prec LIST_ACCESS',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
