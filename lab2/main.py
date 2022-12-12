@@ -85,12 +85,17 @@ a + b * c;
     '''
 
     text = '''
-    if(i < 1)
-        1
-    else
+    if(i < 1) 
+    {
+        a = 1;
+    }
+    else 
+    {
         b = 2;
-    '''
+    }
 
+    '''
+    
     tokens = lexer.tokenize(text)
     for t in lexer.tokenize(text):
         # print(t)

@@ -49,7 +49,7 @@ class SimpleParser(Parser):
         'JumpStatement ";"',
         'PrintStatement ";"',
         'AssignmentStatement ";"',
-        'ExpressionStatement ";"')
+        'Expression ";"')
     def Statement(self, p):
         if self.verbose:
             print("Statement", p[0])
@@ -62,19 +62,13 @@ class SimpleParser(Parser):
             print("CompoundStatement", p[1])
         return ("CompoundStatement", p[1])
 
-    @_('Expression')
-    def ExpressionStatement(self, p):
-        if self.verbose:
-            print("ExpressionStatement", p[0])
-        return ("ExpressionStatement", p[0])
-
-    @_('IF "(" Expression ")" Expression ELSE Statement %prec IF_ELSE_PREC')
+    @_('IF "(" Expression ")" Statement ELSE Statement %prec IF_ELSE_PREC')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4], p[6])
         return ("SelectionStatement", p[2], p[4], p[6])
 
-    @_('IF "(" Expression ")" Expression %prec IF_PREC')
+    @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4])
