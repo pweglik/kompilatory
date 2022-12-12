@@ -13,11 +13,12 @@ class SimpleParser(Parser):
     
 
     precedence = (
-        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS),
+        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC),
+        ('nonassoc', IF_ELSE_PREC),
         ('left', ADD, SUB),
         ('left', MUL, DIV),
         ('right', UMINUS),
-        ('left', MAT_ACCESS, MAT_TRANS),
+        ('left', LIST_ACCESS, MAT_TRANS),
     )
 
     @_('StatementList')
@@ -67,13 +68,13 @@ class SimpleParser(Parser):
             print("ExpressionStatement", p[0])
         return ("ExpressionStatement", p[0])
 
-    @_('IF "(" Expression ")" Statement ELSE Statement')
+    @_('IF "(" Expression ")" Statement ELSE Statement %prec IF_ELSE_PREC')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4], p[6])
         return ("SelectionStatement", p[2], p[4], p[6])
 
-    @_('IF "(" Expression ")" Statement')
+    @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4])
@@ -135,7 +136,7 @@ class SimpleParser(Parser):
 
     @_('SUB Expression %prec UMINUS',
         'Expression MAT_TRANS',
-        'Expression ListAccess %prec MAT_ACCESS'
+        'Expression ListAccess %prec LIST_ACCESS'
         )
     def Expression(self, p):
         if self.verbose:
