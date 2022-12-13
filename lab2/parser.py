@@ -25,13 +25,13 @@ class SimpleParser(Parser):
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0], p[1])
-        return p[0], p[1]
+        return [p[0]]+ p[1]
 
     @_('Statement')
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0])
-        return p[0]
+        return [p[0]]
 
     @_('CompoundStatement',
         'SelectionStatement',
@@ -195,9 +195,7 @@ class SimpleParser(Parser):
             print("ListContent", p[0], p[2])
 
         # print(f'p[0]: {p[0]}\tp[1]: {p[2]}\t[p[0]]: {[p[0]]}\t[p[0]].extend(p[1]): {[p[0]].extend(p[1])}')
-        result = [p[0]]
-        result.extend(p[2])
-        return result
+        return [p[0]]+p[2]
 
     @_('Expression')
     def ListContent(self, p):
