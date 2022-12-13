@@ -1,24 +1,6 @@
 from parser import SimpleParser
 from lexer import SimpleLexer
-
-def draw_ast(node, layers = 0):
-    if type(node) is tuple:
-        string = '|  ' * layers + str(node[0])
-        print(string)
-
-        for i in range(1, len(node)):
-            draw_ast(node[i], layers + 1)
-
-    elif type(node) is list:
-        for i in range(len(node)):
-            draw_ast(node[i], layers)
-    else:
-        # primitive or list
-        string = '|  ' * layers + str(node)
-        print(string)
-
-
-        
+from draw_ast import draw_ast
 
 if __name__ == '__main__':
     lexer = SimpleLexer()
@@ -124,13 +106,3 @@ a + b * c;
     #     print(statement)
 
     draw_ast(result)
-
-
-
-    # while True:
-    #     try:
-    #         text = input("$ ")
-    #         result = parser.parse(lexer.tokenize(text))
-    #         print(result)
-    #     except EOFError:
-    #         break
