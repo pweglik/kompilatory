@@ -12,12 +12,14 @@ class SimpleParser(Parser):
     debugfile='debug.log'
 
     precedence = (
-        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS, IF_PREC, NO_MORE_LIST_ACCESS),
-        ('nonassoc', ELSE, ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
+        ('nonassoc', IF_PREC),
+        ('nonassoc', ELSE),
+        ('nonassoc', ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
+        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS),
         ('left', ADD, SUB, ADD_EL, SUB_EL),
         ('left', MUL, DIV, MUL_EL, DIV_EL),
         ('right', UMINUS),
-        ('left', LIST_ACCESS, MAT_TRANS, MORE_LIST_ACCESS),
+        ('left', MAT_TRANS),
     )
 
 
@@ -141,13 +143,6 @@ class SimpleParser(Parser):
             print('Expression', p[0], p[1])
         return ('TRANSPOSE', p[0])
 
-    @_('Expression ListAccess')
-    def Expression(self, p):
-        if self.verbose:
-            print('Expression', p[0], p[1])
-        return (p[1], p[0])
-
-
     @_('List', 
     'Primitive', 
     'ID', 
@@ -157,17 +152,23 @@ class SimpleParser(Parser):
             print('Expression', p[0])
         return p[0]
 
-    @_('"[" ListAccessElement "]" %prec NO_MORE_LIST_ACCESS')
+    @_('ID ListAccess' )
+    def Expression(self, p):
+        if self.verbose:
+            print('Expression', p[0])
+        return p[1], p[0]
+
+    @_('"[" ListAccessElement "]"')
     def ListAccess(self, p):
         if self.verbose:
             print("ListAccess", p[1])
-        return ('Access', p[1])
+        return ('Access', [p[1]])
 
-    @_('"[" ListAccessElement "]" ListAccess %prec MORE_LIST_ACCESS')
+    @_('"[" ListAccessElement "]" ListAccess')
     def ListAccess(self, p):
         if self.verbose:
             print("ListAccess", p[1], p[3])
-        return ('Access', [p[1]].extend(p[3][1]))
+        return ('Access', [p[1]] + p[3][1])
 
     @_('INT', 'ID')
     def ListAccessElement(self, p):
@@ -240,11 +241,12 @@ class SimpleParser(Parser):
         return (p[1], p[0], p[2])
 
 
-    @_('ID ListAccess ASS Expression %prec LIST_ACCESS', 
-    'ID ListAccess ASS_ADD Expression %prec LIST_ACCESS',
-    'ID ListAccess ASS_SUB Expression %prec LIST_ACCESS',
-    'ID ListAccess ASS_DIV Expression %prec LIST_ACCESS',
-    'ID ListAccess ASS_MUL Expression %prec LIST_ACCESS',)
+    @_(
+    'ID ListAccess ASS Expression', 
+    'ID ListAccess ASS_ADD Expression',
+    'ID ListAccess ASS_SUB Expression',
+    'ID ListAccess ASS_DIV Expression',
+    'ID ListAccess ASS_MUL Expression',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
