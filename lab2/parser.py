@@ -77,7 +77,7 @@ class SimpleParser(Parser):
     def IterationStatement(self, p):
         if self.verbose:
             print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
-        return 'FOR', p[1], p[2], p[4]
+        return 'FOR', p[1], p[2], p[3], p[4]
 
     @_('BREAK',
         'CONTINUE')
