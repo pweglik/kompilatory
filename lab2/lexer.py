@@ -85,8 +85,21 @@ class SimpleLexer(Lexer):
         raise ValueError(f"Illegal number (E2): '{token.value}'!")
 
 
-    FLOAT           = r'(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?'
-    INT             = r'([1-9][0-9]*)|0'
+    @_(r'(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?')
+    def FLOAT(self, t):
+        t.value = int(t.value)   # Convert to a numeric value
+        return t
+
+
+    @_(r'([1-9][0-9]*)|0')
+    def INT(self, t):
+        t.value = int(t.value)   # Convert to a numeric value
+        return t
+
+
+
+    # FLOAT           = r'(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?'
+    # INT             = r'([1-9][0-9]*)|0'
     ID              = r'[a-zA-Z_][a-zA-Z0-9_]*'
     STRING          = r'"(([^"\\])|(\\.))*"'
 

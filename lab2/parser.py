@@ -145,7 +145,7 @@ class SimpleParser(Parser):
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
-        return (p[0])
+        return p[0]
 
     @_('"[" ListAccessElement "]" %prec NO_MORE_LIST_ACCESS')
     def ListAccess(self, p):
@@ -187,19 +187,23 @@ class SimpleParser(Parser):
     def List(self, p):
         if self.verbose:
             print("List", p[1])
-        return ("List", p[1])
+        return 'List', p[1]
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
         if self.verbose:
             print("ListContent", p[0], p[2])
-        return p[0], p[2]
+
+        # print(f'p[0]: {p[0]}\tp[1]: {p[2]}\t[p[0]]: {[p[0]]}\t[p[0]].extend(p[1]): {[p[0]].extend(p[1])}')
+        result = [p[0]]
+        result.extend(p[2])
+        return result
 
     @_('Expression')
     def ListContent(self, p):
         if self.verbose:
             print("ListContent", p[0])
-        return p[0]
+        return [p[0]]
 
     @_('Number',
         'STRING')
@@ -236,7 +240,7 @@ class SimpleParser(Parser):
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
-        return (p[2], p[0], p[1], p[3])
+        return (p[2], (p[0], p[1]), p[3])
 
 
     @_('INT', 'FLOAT')

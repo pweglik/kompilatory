@@ -88,6 +88,8 @@ a + b * c;
     a = [1, 2 , [3, 4]];
     c = a[1][2];
     b[5] = 7;
+
+    [2, 3, 4];
     '''
     
     tokens = lexer.tokenize(text)
