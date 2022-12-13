@@ -95,8 +95,8 @@ a + b * c;
         # print(t)
         pass
     result = parser.parse(tokens)
-    # print(f'\n{result}')
-    draw_ast(result)
+    print(f'\n{result}')
+    # draw_ast(result)
 
 
 
