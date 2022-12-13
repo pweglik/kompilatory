@@ -230,28 +230,23 @@ class SimpleParser(Parser):
         return (p[0], p[2])
 
 
-    @_('ID ASS Expression',
-    'ID ASS_ADD Expression',
-    'ID ASS_SUB Expression',
-    'ID ASS_DIV Expression',
-    'ID ASS_MUL Expression',)
+    @_('LValue ASS Expression',
+    'LValue ASS_ADD Expression',
+    'LValue ASS_SUB Expression',
+    'LValue ASS_DIV Expression',
+    'LValue ASS_MUL Expression',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
         return (p[1], p[0], p[2])
 
+    @_('ID')
+    def LValue(self, p):
+        return p[0]
 
-    @_(
-    'ID ListAccess ASS Expression', 
-    'ID ListAccess ASS_ADD Expression',
-    'ID ListAccess ASS_SUB Expression',
-    'ID ListAccess ASS_DIV Expression',
-    'ID ListAccess ASS_MUL Expression',)
-    def AssignmentStatement(self, p):
-        if self.verbose:
-            print("AssignmentStatement", p[0], p[1], p[2])
-        return (p[2], (p[0], p[1]), p[3])
-
+    @_('ID ListAccess')
+    def LValue(self, p):
+        return p[1], p[0]
 
     @_('INT', 'FLOAT')
     def Number(self, p):
