@@ -145,30 +145,24 @@ class SimpleParser(Parser):
 
     @_('List', 
     'Primitive', 
-    'ID', 
+    'LValue', 
     'MatrixFunctions')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
         return p[0]
 
-    @_('ID ListAccess' )
-    def Expression(self, p):
-        if self.verbose:
-            print('Expression', p[0])
-        return p[1], p[0]
-
     @_('"[" ListAccessElement "]"')
     def ListAccess(self, p):
         if self.verbose:
             print("ListAccess", p[1])
-        return ('Access', [p[1]])
+        return ([p[1]])
 
     @_('"[" ListAccessElement "]" ListAccess')
     def ListAccess(self, p):
         if self.verbose:
             print("ListAccess", p[1], p[3])
-        return ('Access', [p[1]] + p[3][1])
+        return ([p[1]] + p[3])
 
     @_('INT', 'ID')
     def ListAccessElement(self, p):
@@ -246,7 +240,7 @@ class SimpleParser(Parser):
 
     @_('ID ListAccess')
     def LValue(self, p):
-        return p[1], p[0]
+        return 'Access', p[0], p[1]
 
     @_('INT', 'FLOAT')
     def Number(self, p):

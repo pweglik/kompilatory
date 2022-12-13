@@ -7,7 +7,7 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text='''
-    # control flow instruction
+# control flow instruction
 
 N = 10;
 M = 20;
@@ -28,7 +28,6 @@ while(k>0) {
     k = k - 1;
 }
 
-a[1][2] = b;
 
 
     '''

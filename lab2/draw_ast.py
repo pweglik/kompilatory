@@ -18,6 +18,6 @@ def draw_ast(node, layers = 0):
         for i in range(len(node)):
             draw_ast(node[i], layers)
     else:
-        # primitive or list
+        # primitive
         string = '|  ' * layers + str(node)
         print(string)
