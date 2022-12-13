@@ -1,15 +1,23 @@
 from parser import SimpleParser
 from lexer import SimpleLexer
 
-def draw_ast(node):
-    if node[0] == "Statement":
-        print("\n\n")
-        print(node)
-        
-    if node[0] == "Program" or node[0] == "StatementList":
-        for el in node[1:]:
-            if el is not None:
-                draw_ast(el)
+def draw_ast(node, layers = 0):
+    if type(node) is tuple:
+        string = '|  ' * layers + str(node[0])
+        print(string)
+
+        for i in range(1, len(node)):
+            draw_ast(node[i], layers + 1)
+
+    elif type(node) is list:
+        for i in range(len(node)):
+            draw_ast(node[i], layers)
+    else:
+        # primitive or list
+        string = '|  ' * layers + str(node)
+        print(string)
+
+
         
 
 if __name__ == '__main__':
@@ -89,19 +97,33 @@ a + b * c;
     c = a[1][2];
     b[5] = 7;
 
-    [2, 3, 4];
+    for i = 1:N
+    for j = i:M
+        print i, j;
+
+    for i = 1:N {
+        if(i<=N/16)
+            print i;
+        else if(i<=N/8)
+            break;
+        else if(i<=N/4)
+            continue;
+        else if(i<=N/2)
+            return 0;
+    }
     '''
     
     tokens = lexer.tokenize(text)
-    for t in lexer.tokenize(text):
-        # print(t)
-        pass
+
+    # for t in lexer.tokenize(text):
+    #     print(t)
+
     result = parser.parse(tokens)
 
-    for statement in result:
-        print(statement)
-    # print(f'\n{result}')
-    # draw_ast(result)
+    # for statement in result:
+    #     print(statement)
+
+    draw_ast(result)
 
 
 
