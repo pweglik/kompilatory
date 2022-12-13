@@ -102,7 +102,9 @@ a + b * c;
 
     result = parser.parse(tokens)
 
+    # print()
     # for statement in result:
     #     print(statement)
+    # print(f'\n{result}')
 
     draw_ast(result)
