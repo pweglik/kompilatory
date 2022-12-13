@@ -56,13 +56,13 @@ class SimpleParser(Parser):
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4])
-        return p[2], p[4]
+        return p[0], p[2], p[4]
     
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4], p[6])
-        return p[2], p[4], p[6]
+        return p[0], p[2], p[4], p[5], p[6]
 
     @_('WHILE "(" Expression ")" Statement',
         'FOR ID ASS Range Statement',
@@ -130,8 +130,13 @@ class SimpleParser(Parser):
         return ('-', p[1])
 
 
-    @_('Expression MAT_TRANS',
-        'Expression ListAccess',)
+    @_('Expression MAT_TRANS')
+    def Expression(self, p):
+        if self.verbose:
+            print('Expression', p[0], p[1])
+        return ('TRANSPOSITION', p[0])
+
+    @_('Expression ListAccess')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0], p[1])
