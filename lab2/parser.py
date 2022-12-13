@@ -56,29 +56,33 @@ class SimpleParser(Parser):
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4])
-        return p[0], p[2], p[4]
+        return "IF_TAG",(("IF", p[2]), ("THEN", p[4]))
     
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
         if self.verbose:
             print("SelectionStatement", p[2], p[4], p[6])
-        return p[0], p[2], p[4], p[5], p[6]
+        return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
 
-    @_('WHILE "(" Expression ")" Statement',
-        'FOR ID ASS Range Statement',
+    @_('WHILE "(" Expression ")" Statement')
+    def IterationStatement(self, p):
+        if self.verbose:
+            print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
+        return 'WHILE', p[2], p[4]
+
+    @_('FOR ID ASS Range Statement',
         'FOR ID ASS List Statement')
     def IterationStatement(self, p):
         if self.verbose:
             print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
-        return p[0], p[2], p[4]
-
+        return 'FOR', p[1], p[2], p[4]
 
     @_('BREAK',
         'CONTINUE')
     def JumpStatement(self, p):
         if self.verbose:
             print("JumpStatement", p[0])
-        return p[0]
+        return p[0].upper()
 
     @_(
         'RETURN Expression')
@@ -92,7 +96,7 @@ class SimpleParser(Parser):
     def PrintStatement(self, p):
         if self.verbose:
             print("PrintStatement", p[1])
-        return ("PrintStatement", p[1])
+        return 'PRINT', p[1]
 
     @_(
         'Expression ADD Expression',
@@ -115,6 +119,7 @@ class SimpleParser(Parser):
             print("Expression", p[0], p[1], p[2])
         return (p[1], p[0], p[2])
 
+
     @_('"(" Expression ")"',)
     def Expression(self, p):
         if self.verbose:
@@ -134,7 +139,7 @@ class SimpleParser(Parser):
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0], p[1])
-        return ('TRANSPOSITION', p[0])
+        return ('TRANSPOSE', p[0])
 
     @_('Expression ListAccess')
     def Expression(self, p):
