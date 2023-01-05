@@ -1,4 +1,4 @@
-from parser import SimpleParser
+from my_parser import SimpleParser
 from lexer import SimpleLexer
 from draw_ast import draw_ast
 
@@ -7,8 +7,6 @@ if __name__ == '__main__':
     parser = SimpleParser()
 
     text='''
-# control flow instruction
-
 N = 10;
 M = 20;
 for i = 1:N {

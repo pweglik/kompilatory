@@ -43,6 +43,7 @@ class SimpleParser(Parser):
         'AssignmentStatement ";"',
         'Expression ";"')
     def Statement(self, p):
+        print("lala", p.lineno, p[0])
         if self.verbose:
             print("Statement", p[0])
         return p[0]
@@ -86,8 +87,7 @@ class SimpleParser(Parser):
             print("JumpStatement", p[0])
         return p[0].upper()
 
-    @_(
-        'RETURN Expression')
+    @_('RETURN Expression')
     def JumpStatement(self, p):
         if self.verbose:
             print("JumpStatement", p[0], p[1])
