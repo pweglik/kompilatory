@@ -1,29 +1,54 @@
 class Node:
     pass
 
-class LValue(Node):
-    def __init__(self, value, line_number=None):
+class StatementList(Node):
+    def __init__(self, statements, line_number):
+        self.statements = statements
+
         self.line_number = line_number
 
-        self.value = value
+class Statement(Node):
+    def __init__(self, statement, line_number):
+        self.statement = statement
 
-class LValue(Node):
-    def __init__(self, value, line_number=None):
         self.line_number = line_number
 
-        self.value = value
 
-class LValue(Node):
-    def __init__(self, value, line_number=None):
+class SelectionStatement(Node):
+    def __init__(self, expression, statement_true, statement_false, line_number):
+        self.expression = expression
+        self.statement_true = statement_true
+        self.statement_false = statement_false
+
         self.line_number = line_number
 
-        self.value = value
+class IterationStatement(Node):
+    def __init__(self, expression, statement, items, line_number):
+        self.expression = expression
+        self.items = items
+        self.statement = statement
 
-class LValue(Node):
-    def __init__(self, value, line_number=None):
+        self.line_number = line_number
+    
+class JumpStatement(Node):
+    def __init__(self, line_number):
         self.line_number = line_number
 
-        self.value = value
+
+class PrintStatement(Node):
+    def __init__(self, expression, line_number):
+        self.expression = expression
+
+        self.line_number = line_number
+
+class AssignmentStatement(Node):
+    def __init__(self, identifier, ass_operator, expression, line_number):
+        self.identifier = identifier
+        self.ass_operator = ass_operator
+        self.expression = expression
+
+        self.line_number = line_number
+
 
 class Continue(Node):
     def __init__(self, line_number=None):
@@ -119,14 +144,6 @@ class MatrixFunctions(Node):
 
         self.function = function
         self.size = size
-
-class AssignmentStatement(Node):
-    def __init__(self, l_value, ass_operator, expression, line_number=None):
-        self.line_number = line_number
-
-        self.l_value = l_value
-        self.ass_operator = ass_operator
-        self.expression = expression
 
 class LValue(Node):
     def __init__(self, id, list_access=None, line_number=None):

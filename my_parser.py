@@ -46,6 +46,7 @@ class SimpleParser(Parser):
         print("lala", p.lineno, p[0])
         if self.verbose:
             print("Statement", p[0])
+        print(p[0])
         return p[0]
 
     
