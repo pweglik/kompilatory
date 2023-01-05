@@ -1,4 +1,4 @@
-from parser import SimpleParser
+from my_parser import SimpleParser
 from lexer import SimpleLexer
 from draw_ast import draw_ast
 

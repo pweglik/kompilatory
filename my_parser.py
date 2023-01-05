@@ -45,6 +45,7 @@ class SimpleParser(Parser):
     def Statement(self, p):
         if self.verbose:
             print("Statement", p[0])
+        print(p[0])
         return p[0]
 
     
