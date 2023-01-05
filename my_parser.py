@@ -2,7 +2,7 @@
 
 from lexer import SimpleLexer
 from sly import Parser
-
+import AST
 
 scanner_obj = SimpleLexer()
 
@@ -27,13 +27,17 @@ class SimpleParser(Parser):
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0], p[1])
-        return [p[0]]+ p[1]
+
+        p[1].statements.insert(0, p[0])
+        p[1].line_number = p[0].line_number
+        return p[1]
 
     @_('Statement')
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0])
-        return [p[0]]
+        # return [p[0]]
+        return AST.StatementList([p[0]], p[0].line_number)
 
     @_('CompoundStatement',
         'SelectionStatement',
@@ -46,8 +50,7 @@ class SimpleParser(Parser):
         print("lala", p.lineno, p[0])
         if self.verbose:
             print("Statement", p[0])
-        print(p[0])
-        return p[0]
+        return 
 
     
     @_('"{" StatementList "}"')
@@ -247,4 +250,5 @@ class SimpleParser(Parser):
     def Number(self, p):
         if self.verbose:
             print("Number", p[0])
+        print(p.lineno)
         return p[0]
