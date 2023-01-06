@@ -28,16 +28,17 @@ class SimpleParser(Parser):
         if self.verbose:
             print("StatementList", p[0], p[1])
 
+        # return [("Statement",p[0])] + p[1]
         p[1].statements.insert(0, p[0])
-        p[1].line_number = p[0].line_number
         return p[1]
+
 
     @_('Statement')
     def StatementList(self, p):
         if self.verbose:
             print("StatementList", p[0])
-        # return [p[0]]
-        return AST.StatementList([p[0]], p[0].line_number)
+        # return [("Statement", p[0])]
+        return AST.StatementList(statements=[p[0]])
 
     @_('CompoundStatement',
         'SelectionStatement',
@@ -47,10 +48,10 @@ class SimpleParser(Parser):
         'AssignmentStatement ";"',
         'Expression ";"')
     def Statement(self, p):
-        print("lala", p.lineno, p[0])
+        # print("lala", p.lineno, p[0])
         if self.verbose:
             print("Statement", p[0])
-        return 
+        return p[0]
 
     
     @_('"{" StatementList "}"')
@@ -71,6 +72,10 @@ class SimpleParser(Parser):
             print("SelectionStatement", p[2], p[4], p[6])
         return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
 
+
+
+
+
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
         if self.verbose:
@@ -82,7 +87,11 @@ class SimpleParser(Parser):
     def IterationStatement(self, p):
         if self.verbose:
             print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
-        return 'FOR', p[1], p[2], p[3], p[4]
+        # return 'FOR', p[1], p[2], p[3], p[4]
+        return AST.ForStatement(identifier=p[1], elements=p[3], statement=p[4], line_number=p.lineno)
+
+
+
 
     @_('BREAK',
         'CONTINUE')
@@ -123,7 +132,8 @@ class SimpleParser(Parser):
     def Expression(self, p):
         if self.verbose:
             print("Expression", p[0], p[1], p[2])
-        return (p[1], p[0], p[2])
+        # return (p[1], p[0], p[2])
+        return AST.BinaryOperation(p[0], p[1], p[2])
 
 
     @_('"(" Expression ")"',)
@@ -138,7 +148,8 @@ class SimpleParser(Parser):
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0], p[1])
-        return ('-', p[1])
+        # return ('-', p[1])
+        return AST.UnaryMinusOperation(p[1], line_number=p.lineno)
 
 
     @_('Expression MAT_TRANS')
@@ -178,7 +189,8 @@ class SimpleParser(Parser):
     def Range(self, p):
         if self.verbose:
             print("Range", p[0], p[2])
-        return ("Range", p[0], p[2])
+        # return ("Range", p[0], p[2])
+        return AST.Range(from_el=p[0], to_el=p[2], line_number=p[0].line_number)
 
     @_('RangeElement ":" RangeElement ":" RangeElement')
     def Range(self, p):
@@ -186,11 +198,21 @@ class SimpleParser(Parser):
             print("Range", p[0], p[2], p[4])
         return ("Range", p[0], p[2], p[4])
 
-    @_('Number', 'ID')
+    @_('Number')
     def RangeElement(self, p):
         if self.verbose:
             print("RangeElement", p[0])
-        return p[0]
+        # return p[0]
+        element = AST.RangeElement(value=p[0], line_number=p[0].line_number)
+        return element
+
+    @_( 'ID')
+    def RangeElement(self, p):
+        if self.verbose:
+            print("RangeElement", p[0])
+        # return p[0]
+        element = AST.RangeElement(value=p[0], line_number=p.lineno)
+        return element
 
     @_('"[" ListContent "]"')
     def List(self, p):
@@ -228,27 +250,37 @@ class SimpleParser(Parser):
         return (p[0], p[2])
 
 
-    @_('LValue ASS Expression',
-    'LValue ASS_ADD Expression',
+    @_('LValue ASS Expression')
+    def AssignmentStatement(self, p):
+        if self.verbose:
+            print("AssignmentStatement", p[0], p[1], p[2])
+        # return (p[1], p[0], p[2])
+        return AST.AssignmentStatement(identifier=p[0], ass_operator='=', expression=p[2], line_number=p[0].line_number)
+
+
+    @_('LValue ASS_ADD Expression',
     'LValue ASS_SUB Expression',
     'LValue ASS_DIV Expression',
     'LValue ASS_MUL Expression',)
     def AssignmentStatement(self, p):
         if self.verbose:
             print("AssignmentStatement", p[0], p[1], p[2])
-        return (p[1], p[0], p[2])
+        # return (p[1], p[0], p[2])
+        return AST.AssignmentStatement(identifier=p[0], ass_operator=p[1], expression=p[2], line_number=p[0].line_number)
 
     @_('ID')
     def LValue(self, p):
-        return p[0]
+        return AST.LValue(p[0], line_number=p.lineno)
 
     @_('ID ListAccess')
     def LValue(self, p):
-        return 'Access', p[0], p[1]
+        # return 'Access', p[0], p[1]
+        return AST.LValue(p[0], p[1], line_number=p.lineno)
 
     @_('INT', 'FLOAT')
     def Number(self, p):
         if self.verbose:
             print("Number", p[0])
-        print(p.lineno)
-        return p[0]
+        # print(p.lineno)
+        
+        return AST.Number(p[0], p.lineno)
