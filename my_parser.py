@@ -68,11 +68,12 @@ class SimpleParser(Parser):
 
     @_("BREAK", "CONTINUE")
     def JumpStatement(self, p):
-        return p[0].upper()
+        # return p[0].upper()
+        return AST.JumpStatement(name=p[0].upper(), line_number=p.lineno)
 
     @_("RETURN Expression")
     def JumpStatement(self, p):
-        return p[0], p[1]
+        return AST.JumpStatement(name=p[0].upper(), expression=p[1], line_number=p.lineno)
 
     @_("PRINT ListContent")
     def PrintStatement(self, p):

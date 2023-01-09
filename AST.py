@@ -156,8 +156,24 @@ class LabelNode(Node):
 
 
 class JumpStatement(Node):
-    def __init__(self, line_number):
+    def __init__(self, name, expression=None, line_number=None):
+        super().__init__()
         self.line_number = line_number
+        
+        self.name = name
+        self.expression = expression
+
+    def print(self, indent=0):
+        print("| " * indent + self.name)
+
+    def graph(self, dot):
+        main_node = pydot.Node(self.id, label=self.name, shape="ellipse")
+        dot.add_node(main_node)
+        if self.expression:
+            node = self.expression.graph(dot)
+            edge = pydot.Edge(self.id, self.expression.id, label=0)
+            dot.add_edge(edge)
+        return main_node
 
 
 class PrintStatement(Node):
