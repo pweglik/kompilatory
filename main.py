@@ -5,30 +5,19 @@ from lexer import SimpleLexer
 from draw_ast import draw_ast
 import pydot
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     lexer = SimpleLexer()
     parser = SimpleParser()
 
-    text='''
-# A-=10;
-# A = 10;
-# A = A-1;
-# A = -A-1;
-# N = 10;
+    text = """
+    # control flow instruction
 
-
+N = 10;
 # M = 20;
-
-for i = 1:2 {
-    c = 10;
-}
-
-
 # for i = 1:N {
-    # for j = i:M {
-    #     # print i, j;
-    #     C = 10;
-    # }
+#     for j = i:M {
+#         print i, j;
+#     }
 # }
 
 # while(k>0) {
@@ -43,9 +32,16 @@ for i = 1:2 {
 # }
 
 
+#     D1 = A.+B' ; # add element-wise A with transpose of B
+# D2 -= A.-B' ; # substract element-wise A with transpose of B
+# D3 *= A.*B' ; # multiply element-wise A with transpose of B
+# D4 /= A./B' ; # divide element-wise A with transpose of B
 
-    '''
-    
+    C = zeros(4);
+    B = ones(4);
+    A = eye(4);
+    """
+
     tokens = lexer.tokenize(text)
 
     # for t in lexer.tokenize(text):
@@ -59,8 +55,8 @@ for i = 1:2 {
     # draw_ast(result)
     # print(result)
     result.print()
-    dot = pydot.Dot(graph_type='digraph')
+    dot = pydot.Dot(graph_type="digraph")
     node = result.graph(dot)
 
     # dot.write_pdf('ast.pdf')
-    dot.write_png('ast.png')
+    dot.write_png("ast.png")

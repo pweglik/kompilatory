@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 import pydot
 
+
 class Node(ABC):
     count = 0
+
     def __init__(self):
         self.id = str(Node.count)
         Node.count += 1
@@ -67,18 +69,18 @@ class IterationStatement(Node):
         self.items = items
         self.statement = statement
 
+
 class ForStatement(Node):
     def __init__(self, identifier, elements, statement, line_number=None):
         super().__init__()
         self.line_number = line_number
 
-        self.identifier = identifier # ID string
+        self.identifier = identifier  # ID string
         self.elements = elements
         self.statement = statement
 
     def print(self, indent=0):
         print("| " * indent + "for")
-        # print("| " * (indent + 1) +  str(self.identifier))
         self.identifier.print(indent + 1)
         self.elements.print(indent + 1)
         self.statement.print(indent + 1)
@@ -108,7 +110,7 @@ class LabelNode(Node):
         self.name = name
 
     def print(self, indent=0):
-        print('| '*indent + str(self.name))
+        print("| " * indent + str(self.name))
 
     def graph(self, dot):
         node = pydot.Node(self.id, label=self.name, shape="ellipse")
@@ -147,7 +149,6 @@ class AssignmentStatement(Node):
 
     def graph(self, dot):
 
-
         main_node = pydot.Node(self.id, label=self.ass_operator, shape="ellipse")
         dot.add_node(main_node)
         node1 = self.identifier.graph(dot)
@@ -157,7 +158,6 @@ class AssignmentStatement(Node):
         dot.add_edge(edge1)
         dot.add_edge(edge2)
         return main_node
-
 
 
 class Continue(Node):
@@ -197,12 +197,12 @@ class BinaryOperation(Node):
     #     return f'{self.operator}{self.first_expression}{self.second_expression}'
 
     def print(self, indent=0):
-        print('| '*indent+self.operator)
+        print("| " * indent + self.operator)
         self.first_expression.print(indent + 1)
         self.second_expression.print(indent + 1)
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label=self.operator, shape='ellipse')
+        node = pydot.Node(self.id, label=self.operator, shape="ellipse")
         dot.add_node(node)
         node1 = self.first_expression.graph(dot)
         node2 = self.second_expression.graph(dot)
@@ -271,7 +271,7 @@ class Range(Node):
         # print("| " * (indent + 1) + str(self.to_el))
         self.to_el.print(indent + 1)
         # self.step_el.print(indent + 1)
-        #TODO: check
+        # TODO: check
 
     def graph(self, dot):
         node = pydot.Node(self.id, label="range", shape="ellipse")
@@ -337,13 +337,13 @@ class MatrixFunction(Node):
         self.size = size
 
     def print(self, indent=0):
-        print("| " * indent + f'{self.function}({self.size})')
-        
+        print("| " * indent + f"{self.function}({self.size})")
 
     def graph(self, dot):
         node = pydot.Node(self.id, label=str(self.function), shape="ellipse")
         dot.add_node(node)
         return node
+
 
 class LValue(Node):
     def __init__(self, id, list_access=None, line_number=None):
@@ -362,7 +362,7 @@ class LValue(Node):
         print("| " * indent + self.name)
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label=self.name, shape='ellipse')
+        node = pydot.Node(self.id, label=self.name, shape="ellipse")
         dot.add_node(node)
         return node
 
@@ -381,6 +381,6 @@ class Number(Node):
         print("| " * indent + str(self.value))
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label=self.value, shape='ellipse')
+        node = pydot.Node(self.id, label=self.value, shape="ellipse")
         dot.add_node(node)
         return node

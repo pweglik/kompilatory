@@ -1,8 +1,9 @@
 from sly import Lexer
 
+
 class SimpleLexer(Lexer):
 
-    tokens = { 
+    tokens = {
         ADD,
         SUB,
         MUL,
@@ -40,78 +41,74 @@ class SimpleLexer(Lexer):
         STRING,
     }
 
-    literals = { '(', ')', '[', ']', '{', '}', ',', ':', ';' }
+    literals = {"(", ")", "[", "]", "{", "}", ",", ":", ";"}
 
     # Regular expression rules for tokens
-    ASS_ADD         = r'\+\='
-    ASS_SUB         = r'\-\='
-    ASS_MUL         = r'\*\='
-    ASS_DIV         = r'\/\='
-    ADD_EL          = r'\.\+'
-    SUB_EL          = r'\.\-'
-    MUL_EL          = r'\.\*'
-    DIV_EL          = r'\.\/'
-    LESS_EQ         = r'\>\='
-    GREATER_EQ      = r'\<\='
-    NOT_EQ          = r'\!\='
-    EQ              = r'\=\='
-    LESS            = r'\<'
-    GREATER         = r'\>'
-    ADD             = r'\+'
-    SUB             = r'\-'
-    MUL             = r'\*'
-    DIV             = r'\/'
-    ASS             = r'\='
-    MAT_TRANS       = r'\''
+    ASS_ADD = r"\+\="
+    ASS_SUB = r"\-\="
+    ASS_MUL = r"\*\="
+    ASS_DIV = r"\/\="
+    ADD_EL = r"\.\+"
+    SUB_EL = r"\.\-"
+    MUL_EL = r"\.\*"
+    DIV_EL = r"\.\/"
+    LESS_EQ = r"\>\="
+    GREATER_EQ = r"\<\="
+    NOT_EQ = r"\!\="
+    EQ = r"\=\="
+    LESS = r"\<"
+    GREATER = r"\>"
+    ADD = r"\+"
+    SUB = r"\-"
+    MUL = r"\*"
+    DIV = r"\/"
+    ASS = r"\="
+    MAT_TRANS = r"\'"
 
-    IF              = r'if'
-    ELSE            = r'else'
-    FOR             = r'for'
-    WHILE           = r'while'
-    BREAK           = r'break'
-    CONTINUE        = r'continue'
-    RETURN          = r'return'
-    EYE             = r'eye'
-    ZEROS           = r'zeros'
-    ONES            = r'ones'
-    PRINT           = r'print'
+    IF = r"if"
+    ELSE = r"else"
+    FOR = r"for"
+    WHILE = r"while"
+    BREAK = r"break"
+    CONTINUE = r"continue"
+    RETURN = r"return"
+    EYE = r"eye"
+    ZEROS = r"zeros"
+    ONES = r"ones"
+    PRINT = r"print"
 
-    @_(r'0[1-9][0-9]*')
+    @_(r"0[1-9][0-9]*")
     def zero_before_number(self, token):
         raise ValueError(f"Illegal number (E1): '{token.value}'!")
 
-    @_(r'(([0-9]+)|((([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?))[a-zA-DF-Z_]')
+    @_(r"(([0-9]+)|((([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?))[a-zA-DF-Z_]")
     def letters_after_number(self, token):
         raise ValueError(f"Illegal number (E2): '{token.value}'!")
 
-
-    @_(r'(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?')
+    @_(r"(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?")
     def FLOAT(self, t):
-        t.value = int(t.value)   # Convert to a numeric value
+        t.value = int(t.value)  # Convert to a numeric value
         return t
 
-
-    @_(r'([1-9][0-9]*)|0')
+    @_(r"([1-9][0-9]*)|0")
     def INT(self, t):
-        t.value = int(t.value)   # Convert to a numeric value
+        t.value = int(t.value)  # Convert to a numeric value
         return t
-
-
 
     # FLOAT           = r'(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?'
     # INT             = r'([1-9][0-9]*)|0'
-    ID              = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    STRING          = r'"(([^"\\])|(\\.))*"'
+    ID = r"[a-zA-Z_][a-zA-Z0-9_]*"
+    STRING = r'"(([^"\\])|(\\.))*"'
 
-    ignore = ' \t'
-    ignore_comment = r'\#.*'
+    ignore = " \t"
+    ignore_comment = r"\#.*"
 
-    @_(r'\n+')
+    @_(r"\n+")
     def ignore_newline(self, t):
         self.lineno += len(t.value)
 
     def find_column(self, text: str, token):
-        last_cr = text.rfind('\n', 0, token.index)
+        last_cr = text.rfind("\n", 0, token.index)
         if last_cr < 0:
             last_cr = 0
         column = (token.index - last_cr) + 1

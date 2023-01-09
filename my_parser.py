@@ -6,135 +6,129 @@ import AST
 
 scanner_obj = SimpleLexer()
 
+
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
-    debugfile='debug.log'
+    debugfile = "debug.log"
 
     precedence = (
-        ('nonassoc', IF_PREC),
-        ('nonassoc', ELSE),
-        ('nonassoc', ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
-        ('nonassoc', EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS),
-        ('left', ADD, SUB, ADD_EL, SUB_EL),
-        ('left', MUL, DIV, MUL_EL, DIV_EL),
-        ('right', UMINUS),
-        ('left', MAT_TRANS),
+        ("nonassoc", IF_PREC),
+        ("nonassoc", ELSE),
+        ("nonassoc", ASS, ASS_ADD, ASS_SUB, ASS_DIV, ASS_MUL),
+        ("nonassoc", EQ, LESS_EQ, GREATER_EQ, NOT_EQ, GREATER, LESS),
+        ("left", ADD, SUB, ADD_EL, SUB_EL),
+        ("left", MUL, DIV, MUL_EL, DIV_EL),
+        ("right", UMINUS),
+        ("left", MAT_TRANS),
     )
 
-
-    @_('Statement StatementList')
+    @_("Statement StatementList")
     def StatementList(self, p):
         # return [("Statement",p[0])] + p[1]
         p[1].statements.insert(0, p[0])
         return p[1]
 
-
-    @_('Statement')
+    @_("Statement")
     def StatementList(self, p):
         # return [("Statement", p[0])]
         return AST.StatementList(statements=[p[0]])
 
-    @_('CompoundStatement',
-        'SelectionStatement',
-        'IterationStatement',
+    @_(
+        "CompoundStatement",
+        "SelectionStatement",
+        "IterationStatement",
         'JumpStatement ";"',
         'PrintStatement ";"',
         'AssignmentStatement ";"',
-        'Expression ";"')
+        'Expression ";"',
+    )
     def Statement(self, p):
         return p[0]
 
-    
     @_('"{" StatementList "}"')
     def CompoundStatement(self, p):
         return p[1]
 
     @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
-        return "IF_TAG",(("IF", p[2]), ("THEN", p[4]))
-    
+        return "IF_TAG", (("IF", p[2]), ("THEN", p[4]))
+
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
         return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
 
-
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
-        return 'WHILE', p[2], p[4]
+        return "WHILE", p[2], p[4]
 
-    @_('FOR ID ASS Range Statement',
-        'FOR ID ASS List Statement')
+    @_("FOR ID ASS Range Statement", "FOR ID ASS List Statement")
     def IterationStatement(self, p):
         # return 'FOR', p[1], p[2], p[3], p[4]
         iterator = AST.LabelNode(name=p[1], line_number=p.lineno)
-        return AST.ForStatement(identifier=iterator, elements=p[3], statement=p[4], line_number=p.lineno)
+        return AST.ForStatement(
+            identifier=iterator, elements=p[3], statement=p[4], line_number=p.lineno
+        )
 
-
-    @_('BREAK',
-        'CONTINUE')
+    @_("BREAK", "CONTINUE")
     def JumpStatement(self, p):
         return p[0].upper()
 
-    @_('RETURN Expression')
+    @_("RETURN Expression")
     def JumpStatement(self, p):
         return p[0], p[1]
 
-
-    @_('PRINT ListContent')
+    @_("PRINT ListContent")
     def PrintStatement(self, p):
-        return 'PRINT', p[1]
+        return "PRINT", p[1]
 
     @_(
-        'Expression ADD Expression',
-        'Expression SUB Expression',
-        'Expression MUL Expression',
-        'Expression DIV Expression',
-        'Expression ADD_EL Expression',
-        'Expression SUB_EL Expression',
-        'Expression MUL_EL Expression',
-        'Expression DIV_EL Expression',
-        'Expression EQ Expression',
-        'Expression NOT_EQ Expression',
-        'Expression LESS_EQ Expression',
-        'Expression GREATER_EQ Expression',
-        'Expression GREATER Expression',
-        'Expression LESS Expression',
-        )
+        "Expression ADD Expression",
+        "Expression SUB Expression",
+        "Expression MUL Expression",
+        "Expression DIV Expression",
+        "Expression ADD_EL Expression",
+        "Expression SUB_EL Expression",
+        "Expression MUL_EL Expression",
+        "Expression DIV_EL Expression",
+        "Expression EQ Expression",
+        "Expression NOT_EQ Expression",
+        "Expression LESS_EQ Expression",
+        "Expression GREATER_EQ Expression",
+        "Expression GREATER Expression",
+        "Expression LESS Expression",
+    )
     def Expression(self, p):
         return AST.BinaryOperation(p[0], p[1], p[2])
 
-
-    @_('"(" Expression ")"',)
+    @_(
+        '"(" Expression ")"',
+    )
     def Expression(self, p):
         return p[1]
 
-
-    @_('SUB Expression %prec UMINUS',
-        )
+    @_(
+        "SUB Expression %prec UMINUS",
+    )
     def Expression(self, p):
         return AST.UnaryMinusOperation(p[1], line_number=p.lineno)
 
-
-    @_('Expression MAT_TRANS')
+    @_("Expression MAT_TRANS")
     def Expression(self, p):
-        return ('TRANSPOSE', p[0])
+        return ("TRANSPOSE", p[0])
 
-    @_('List', 
-    'Primitive', 
-    'LValue', 
-    'MatrixFunction')
+    @_("List", "Primitive", "LValue", "MatrixFunction")
     def Expression(self, p):
         return p[0]
 
     @_('"[" ListAccessElement "]"')
     def ListAccess(self, p):
-        return ([p[1]])
+        return [p[1]]
 
     @_('"[" ListAccessElement "]" ListAccess')
     def ListAccess(self, p):
-        return ([p[1]] + p[3])
+        return [p[1]] + p[3]
 
-    @_('INT', 'ID')
+    @_("INT", "ID")
     def ListAccessElement(self, p):
         return p[0]
 
@@ -146,59 +140,68 @@ class SimpleParser(Parser):
     def Range(self, p):
         return ("Range", p[0], p[2], p[4])
 
-    @_('Number')
+    @_("Number")
     def RangeElement(self, p):
         element = AST.RangeElement(value=p[0], line_number=p[0].line_number)
         return element
 
-    @_( 'ID')
+    @_("ID")
     def RangeElement(self, p):
         element = AST.RangeElement(value=p[0], line_number=p.lineno)
         return element
 
     @_('"[" ListContent "]"')
     def List(self, p):
-        return 'List', p[1]
+        return "List", p[1]
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
         # print(f'p[0]: {p[0]}\tp[1]: {p[2]}\t[p[0]]: {[p[0]]}\t[p[0]].extend(p[1]): {[p[0]].extend(p[1])}')
-        return [p[0]]+p[2]
+        return [p[0]] + p[2]
 
-    @_('Expression')
+    @_("Expression")
     def ListContent(self, p):
         return [p[0]]
 
-    @_('Number',
-        'STRING')
+    @_("Number", "STRING")
     def Primitive(self, p):
         return p[0]
 
-    @_('ZEROS "(" INT ")"',
-        'ONES "(" INT ")"',
-        'EYE "(" INT ")"')
+    @_('ZEROS "(" INT ")"', 'ONES "(" INT ")"', 'EYE "(" INT ")"')
     def MatrixFunction(self, p):
         return AST.MatrixFunction(p[0], p[2])
 
-    @_('LValue ASS Expression')
+    @_("LValue ASS Expression")
     def AssignmentStatement(self, p):
-        return AST.AssignmentStatement(identifier=p[0], ass_operator='=', expression=p[2], line_number=p[0].line_number)
+        return AST.AssignmentStatement(
+            identifier=p[0],
+            ass_operator="=",
+            expression=p[2],
+            line_number=p[0].line_number,
+        )
 
-    @_('LValue ASS_ADD Expression',
-    'LValue ASS_SUB Expression',
-    'LValue ASS_DIV Expression',
-    'LValue ASS_MUL Expression',)
+    @_(
+        "LValue ASS_ADD Expression",
+        "LValue ASS_SUB Expression",
+        "LValue ASS_DIV Expression",
+        "LValue ASS_MUL Expression",
+    )
     def AssignmentStatement(self, p):
-        return AST.AssignmentStatement(identifier=p[0], ass_operator=p[1], expression=p[2], line_number=p[0].line_number)
+        return AST.AssignmentStatement(
+            identifier=p[0],
+            ass_operator=p[1],
+            expression=p[2],
+            line_number=p[0].line_number,
+        )
 
-    @_('ID')
+    @_("ID")
     def LValue(self, p):
         return AST.LValue(p[0], line_number=p.lineno)
 
-    @_('ID ListAccess')
+    @_("ID ListAccess")
     def LValue(self, p):
         return AST.LValue(p[0], p[1], line_number=p.lineno)
 
-    @_('INT', 'FLOAT')
+    @_("INT", "FLOAT")
     def Number(self, p):
         return AST.Number(p[0], p.lineno)
