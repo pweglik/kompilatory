@@ -136,7 +136,7 @@ class SimpleParser(Parser):
 
     @_('RangeElement ":" RangeElement ":" RangeElement')
     def Range(self, p):
-        return ("Range", p[0], p[2], p[4])
+        return AST.Range(from_el=p[0], to_el=p[2], step_el=p[4], line_number=p[0].line_number)
 
     @_("Number")
     def RangeElement(self, p):
