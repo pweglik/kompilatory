@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from my_parser import SimpleParser
 from lexer import SimpleLexer
 from draw_ast import draw_ast
@@ -12,8 +14,9 @@ if __name__ == '__main__':
 # A = 10;
 # A = A-1;
 # A = -A-1;
-
 # N = 10;
+
+
 # M = 20;
 
 for i = 1:2 {
@@ -60,4 +63,4 @@ for i = 1:2 {
     node = result.graph(dot)
 
     # dot.write_pdf('ast.pdf')
-    # dot.write_png('ast.png')
+    dot.write_png('ast.png')

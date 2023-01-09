@@ -72,7 +72,7 @@ class ForStatement(Node):
         super().__init__()
         self.line_number = line_number
 
-        self.identifier = identifier
+        self.identifier = identifier # ID string
         self.elements = elements
         self.statement = statement
 
@@ -86,15 +86,15 @@ class ForStatement(Node):
     def graph(self, dot):
         main_node = pydot.Node(self.id, label="for", shape="ellipse")
         dot.add_node(main_node)
-        # node1 = self.identifier.graph(dot)
-        id = AST.Prim
-        node1 = pydot.Node('0'+self.id, label=self.identifier, shape="ellipse")
+        # node1 = pydot.Node(self.identifier 
+        # id = self.identifier
+        # node1 = pydot.Node('0'+self.id, label=self.identifier, shape="ellipse")
         node2 = self.elements.graph(dot)
         node3 = self.statement.graph(dot)
-        edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
+        # edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
         edge2 = pydot.Edge(self.id, self.elements.id, label=1)
         edge3 = pydot.Edge(self.id, self.statement.id, label=2)
-        dot.add_edge(edge1)
+        # dot.add_edge(edge1)
         dot.add_edge(edge2)
         dot.add_edge(edge3)
         return main_node
