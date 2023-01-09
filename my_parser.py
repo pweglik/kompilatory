@@ -150,11 +150,11 @@ class SimpleParser(Parser):
 
     @_('"[" ListContent "]"')
     def List(self, p):
-        return AST.List(content=p[1])
+        return AST.List(content=p[1], line_number=p.lineno)
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
-        return AST.ListContent(expression=p[0], next_list_content=p[2])
+        return AST.ListContent(expression=p[0], next_list_content=p[2], line_number=p[0].line_number)
 
     @_("Expression")
     def ListContent(self, p):
@@ -166,7 +166,7 @@ class SimpleParser(Parser):
 
     @_('ZEROS "(" Expression ")"', 'ONES "(" Expression ")"', 'EYE "(" Expression ")"')
     def MatrixFunction(self, p):
-        return AST.MatrixFunction(p[0], p[2])
+        return AST.MatrixFunction(p[0], p[2], line_number=p.lineno)
 
     @_("LValue ASS Expression")
     def AssignmentStatement(self, p):
