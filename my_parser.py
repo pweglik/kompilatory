@@ -54,7 +54,7 @@ class SimpleParser(Parser):
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
         return AST.SelectionStatement(expression=p[2], statement_true=p[4], statement_false=p[6], line_number=p.lineno)
-        
+
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
         return AST.WhileStatement(expression=p[2], statement=p[4], line_number=p.lineno)
@@ -164,7 +164,7 @@ class SimpleParser(Parser):
     def Primitive(self, p):
         return AST.Primitive(value=p[0])
 
-    @_('ZEROS "(" INT ")"', 'ONES "(" INT ")"', 'EYE "(" INT ")"')
+    @_('ZEROS "(" Expression ")"', 'ONES "(" Expression ")"', 'EYE "(" Expression ")"')
     def MatrixFunction(self, p):
         return AST.MatrixFunction(p[0], p[2])
 

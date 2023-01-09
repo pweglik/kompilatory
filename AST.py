@@ -399,12 +399,16 @@ class MatrixFunction(Node):
         self.size = size
 
     def print(self, indent=0):
-        print("| " * indent + f"{self.function}({self.size})")
+        print("| " * indent + f"{self.function}")
+        self.size.print(indent + 1)
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label=str(self.function), shape="ellipse")
-        dot.add_node(node)
-        return node
+        main_node = pydot.Node(self.id, label=self.function, shape="ellipse")
+        dot.add_node(main_node)
+        node1 = self.size.graph(dot)
+        edge = pydot.Edge(self.id, self.size.id, label=0)
+        dot.add_edge(edge)
+        return main_node
 
 
 class LValue(Node):
