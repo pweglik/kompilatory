@@ -24,13 +24,11 @@ class SimpleParser(Parser):
 
     @_("Statement StatementList")
     def StatementList(self, p):
-        # return [("Statement",p[0])] + p[1]
         p[1].statements.insert(0, p[0])
         return p[1]
 
     @_("Statement")
     def StatementList(self, p):
-        # return [("Statement", p[0])]
         return AST.StatementList(statements=[p[0]])
 
     @_(
@@ -51,19 +49,18 @@ class SimpleParser(Parser):
 
     @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
-        return "IF_TAG", (("IF", p[2]), ("THEN", p[4]))
+        return AST.SelectionStatement(expression=p[2], statement_true=p[4], line_number=p.lineno)
 
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
-        return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
-
+        return AST.SelectionStatement(expression=p[2], statement_true=p[4], statement_false=p[6], line_number=p.lineno)
+        
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
-        return AST.WhileStatement(condition=p[2], statement=p[4], line_number=p.lineno)
+        return AST.WhileStatement(expression=p[2], statement=p[4], line_number=p.lineno)
 
     @_("FOR ID ASS Range Statement", "FOR ID ASS List Statement")
     def IterationStatement(self, p):
-        # return 'FOR', p[1], p[2], p[3], p[4]
         iterator = AST.LabelNode(name=p[1], line_number=p.lineno)
         return AST.ForStatement(
             identifier=iterator, elements=p[3], statement=p[4], line_number=p.lineno

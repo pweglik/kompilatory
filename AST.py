@@ -53,20 +53,44 @@ class Statement(Node):
 
 
 class SelectionStatement(Node):
-    def __init__(self, expression, statement_true, statement_false, line_number):
+    def __init__(self, expression, statement_true, statement_false=None, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.expression = expression
         self.statement_true = statement_true
         self.statement_false = statement_false
 
+    def print(self, indent=0):
+        print("| " * indent + "if")
+        self.expression.print(indent + 1)
+        self.statement_true.print(indent + 1)
+        if self.statement_false:
+            self.statement_false.print(indent + 1)
+
+    def graph(self, dot):
+        main_node = pydot.Node(self.id, label="SelectionStatement", shape="ellipse")
+        dot.add_node(main_node)
+        node1 = self.expression.graph(dot)
+        node2 = self.statement_true.graph(dot)
+        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
+        edge2 = pydot.Edge(self.id, self.statement_true.id, label=1)
+        dot.add_edge(edge1)
+        dot.add_edge(edge2)
+        if self.statement_false:
+            node3 = self.statement_false.graph(dot)
+            edge3 = pydot.Edge(self.id, self.statement_false.id, label=2)
+            dot.add_edge(edge3)
+        return main_node
+
+
 
 class WhileStatement(Node):
-    def __init__(self, condition, statement, line_number):
+    def __init__(self, expression, statement, line_number):
         super().__init__()
         self.line_number = line_number
 
-        self.expression = condition
+        self.expression = expression
         self.statement = statement
 
     def print(self, indent=0):
