@@ -149,16 +149,15 @@ class SimpleParser(Parser):
 
     @_('"[" ListContent "]"')
     def List(self, p):
-        return "List", p[1]
+        return AST.List(content=p[1])
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
-        # print(f'p[0]: {p[0]}\tp[1]: {p[2]}\t[p[0]]: {[p[0]]}\t[p[0]].extend(p[1]): {[p[0]].extend(p[1])}')
-        return [p[0]] + p[2]
+        return AST.ListContent(expression=p[0], next_list_content=p[2])
 
     @_("Expression")
     def ListContent(self, p):
-        return [p[0]]
+        return AST.ListContent(expression=p[0])
 
     @_("Number", "STRING")
     def Primitive(self, p):

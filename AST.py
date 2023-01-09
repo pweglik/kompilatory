@@ -345,17 +345,59 @@ class RangeElement(Node):
 
 class List(Node):
     def __init__(self, content, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.content = content
 
+    def print(self, indent=0):
+        self.content.print(indent)
+
+    def graph(self, dot):
+        node = pydot.Node(
+            self.id,
+            label="list",
+            shape="ellipse",
+        )
+        dot.add_node(node)
+
+        self.content.graph(dot, self.id)
+        return node
+
 
 class ListContent(Node):
-    def __init__(self, expression, next_list_content, line_number=None):
+    def __init__(self, expression, next_list_content=None, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.expression = expression
         self.next_list_content = next_list_content
+
+    def print(self, indent=0, first=True):
+        self.expression.print(indent + 1)
+
+        if self.next_list_content:
+            self.next_list_content.print(indent, first=False)
+
+    def graph(self, dot, list_id):
+        node = pydot.Node(
+            self.id,
+            label="list element",
+            shape="ellipse",
+        )
+        dot.add_node(node)
+
+        edge = pydot.Edge(list_id, self.id, label=0)
+        dot.add_edge(edge)
+
+        node1 = self.expression.graph(dot)
+        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
+        dot.add_edge(edge1)
+
+        if self.next_list_content:
+            self.next_list_content.graph(dot, list_id)
+
+        return node
 
 
 class Primitive(Node):
@@ -370,14 +412,15 @@ class Primitive(Node):
         self.value = value
 
     def print(self, indent=0):
-        print("| " * indent + str(self.value.value if isinstance(self.value, Number) else self.value))
+        print(
+            "| " * indent
+            + str(self.value.value if isinstance(self.value, Number) else self.value)
+        )
 
     def graph(self, dot):
         node = pydot.Node(
             self.id,
-            label=str(
-                self.value.value if isinstance(self.value, Number) else self.value
-            ),
+            label=str("Number" if isinstance(self.value, Number) else self.value),
             shape="ellipse",
         )
         dot.add_node(node)
