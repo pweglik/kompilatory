@@ -61,14 +61,29 @@ class SelectionStatement(Node):
         self.statement_false = statement_false
 
 
-class IterationStatement(Node):
-    def __init__(self, expression, statement, items, line_number):
+class WhileStatement(Node):
+    def __init__(self, condition, statement, line_number):
+        super().__init__()
         self.line_number = line_number
 
-        self.expression = expression
-        self.items = items
+        self.expression = condition
         self.statement = statement
 
+    def print(self, indent=0):
+        print("| " * indent + "while")
+        self.expression.print(indent + 1)
+        self.statement.print(indent + 1)
+
+    def graph(self, dot):
+        main_node = pydot.Node(self.id, label="while", shape="ellipse")
+        dot.add_node(main_node)
+        node1 = self.expression.graph(dot)
+        node2 = self.statement.graph(dot)
+        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
+        edge2 = pydot.Edge(self.id, self.statement.id, label=1)
+        dot.add_edge(edge1)
+        dot.add_edge(edge2)
+        return main_node
 
 class ForStatement(Node):
     def __init__(self, identifier, elements, statement, line_number=None):
@@ -88,8 +103,6 @@ class ForStatement(Node):
     def graph(self, dot):
         main_node = pydot.Node(self.id, label="for", shape="ellipse")
         dot.add_node(main_node)
-        astnode1 = 1
-        # id = self.identifier
         node1 = self.identifier.graph(dot)
         node2 = self.elements.graph(dot)
         node3 = self.statement.graph(dot)
@@ -143,7 +156,7 @@ class AssignmentStatement(Node):
         return f"{self.identifier}={self.expression}"
 
     def print(self, indent=0):
-        print("| " * indent, self.ass_operator)
+        print("| " * indent + str(self.ass_operator))
         self.identifier.print(indent + 1)
         self.expression.print(indent + 1)
 

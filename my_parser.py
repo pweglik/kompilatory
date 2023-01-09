@@ -59,7 +59,7 @@ class SimpleParser(Parser):
 
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
-        return "WHILE", p[2], p[4]
+        return AST.WhileStatement(condition=p[2], statement=p[4], line_number=p.lineno)
 
     @_("FOR ID ASS Range Statement", "FOR ID ASS List Statement")
     def IterationStatement(self, p):
