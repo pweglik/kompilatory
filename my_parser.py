@@ -68,8 +68,6 @@ class SimpleParser(Parser):
     
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
-        if self.verbose:
-            print("SelectionStatement", p[2], p[4], p[6])
         return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
 
 
@@ -82,10 +80,9 @@ class SimpleParser(Parser):
     @_('FOR ID ASS Range Statement',
         'FOR ID ASS List Statement')
     def IterationStatement(self, p):
-        if self.verbose:
-            print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
         # return 'FOR', p[1], p[2], p[3], p[4]
-        return AST.ForStatement(identifier=p[1], elements=p[3], statement=p[4], line_number=p.lineno)
+        iterator = AST.LabelNode(name=p[1], line_number=p.lineno)
+        return AST.ForStatement(identifier=iterator, elements=p[3], statement=p[4], line_number=p.lineno)
 
 
     @_('BREAK',

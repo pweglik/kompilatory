@@ -6,7 +6,6 @@ class Node(ABC):
     def __init__(self):
         self.id = str(Node.count)
         Node.count += 1
-        
 
     @abstractmethod
     def print(self, indent=0):
@@ -15,6 +14,7 @@ class Node(ABC):
     @abstractmethod
     def graph(self, dot):
         pass
+
 
 class StatementList(
     Node,
@@ -78,28 +78,42 @@ class ForStatement(Node):
 
     def print(self, indent=0):
         print("| " * indent + "for")
-        print("| " * (indent + 1) +  str(self.identifier))
-        # self.identifier.print(indent + 1)
+        # print("| " * (indent + 1) +  str(self.identifier))
+        self.identifier.print(indent + 1)
         self.elements.print(indent + 1)
         self.statement.print(indent + 1)
 
     def graph(self, dot):
         main_node = pydot.Node(self.id, label="for", shape="ellipse")
         dot.add_node(main_node)
-        # node1 = pydot.Node(self.identifier 
+        astnode1 = 1
         # id = self.identifier
-        # node1 = pydot.Node('0'+self.id, label=self.identifier, shape="ellipse")
+        node1 = self.identifier.graph(dot)
         node2 = self.elements.graph(dot)
         node3 = self.statement.graph(dot)
-        # edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
+        edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
         edge2 = pydot.Edge(self.id, self.elements.id, label=1)
         edge3 = pydot.Edge(self.id, self.statement.id, label=2)
-        # dot.add_edge(edge1)
+        dot.add_edge(edge1)
         dot.add_edge(edge2)
         dot.add_edge(edge3)
         return main_node
 
 
+class LabelNode(Node):
+    def __init__(self, name, line_number=None):
+        super().__init__()
+        self.line_number = line_number
+
+        self.name = name
+
+    def print(self, indent=0):
+        print('| '*indent + str(self.name))
+
+    def graph(self, dot):
+        node = pydot.Node(self.id, label=self.name, shape="ellipse")
+        dot.add_node(node)
+        return node
 
 
 class JumpStatement(Node):
