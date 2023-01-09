@@ -73,9 +73,6 @@ class SimpleParser(Parser):
         return "IF_ELSE_TAG", (("IF", p[2]), ("THEN", p[4]), ("ELSE", p[6]))
 
 
-
-
-
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
         if self.verbose:
@@ -89,8 +86,6 @@ class SimpleParser(Parser):
             print("IterationStatement", p[0], p[1], p[2], p[3], p[4])
         # return 'FOR', p[1], p[2], p[3], p[4]
         return AST.ForStatement(identifier=p[1], elements=p[3], statement=p[4], line_number=p.lineno)
-
-
 
 
     @_('BREAK',
@@ -161,7 +156,7 @@ class SimpleParser(Parser):
     @_('List', 
     'Primitive', 
     'LValue', 
-    'MatrixFunctions')
+    'MatrixFunction')
     def Expression(self, p):
         if self.verbose:
             print('Expression', p[0])
@@ -244,11 +239,10 @@ class SimpleParser(Parser):
     @_('ZEROS "(" INT ")"',
         'ONES "(" INT ")"',
         'EYE "(" INT ")"')
-    def MatrixFunctions(self, p):
+    def MatrixFunction(self, p):
         if self.verbose:
             print("Matrix", p[0], p[2])
-        return (p[0], p[2])
-
+        return AST.MatrixFunction(p[0], p[2])
 
     @_('LValue ASS Expression')
     def AssignmentStatement(self, p):
@@ -256,7 +250,6 @@ class SimpleParser(Parser):
             print("AssignmentStatement", p[0], p[1], p[2])
         # return (p[1], p[0], p[2])
         return AST.AssignmentStatement(identifier=p[0], ass_operator='=', expression=p[2], line_number=p[0].line_number)
-
 
     @_('LValue ASS_ADD Expression',
     'LValue ASS_SUB Expression',

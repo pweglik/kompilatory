@@ -314,13 +314,22 @@ class Primitive:
         self.value = value
 
 
-class MatrixFunctions(Node):
+class MatrixFunction(Node):
     def __init__(self, function, size, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.function = function
         self.size = size
 
+    def print(self, indent=0):
+        print("| " * indent + f'{self.function}({self.size})')
+        
+
+    def graph(self, dot):
+        node = pydot.Node(self.id, label=str(self.function), shape="ellipse")
+        dot.add_node(node)
+        return node
 
 class LValue(Node):
     def __init__(self, id, list_access=None, line_number=None):
