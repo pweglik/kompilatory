@@ -165,7 +165,7 @@ class SimpleParser(Parser):
 
     @_("Number", "STRING")
     def Primitive(self, p):
-        return p[0]
+        return AST.Primitive(value=p[0])
 
     @_('ZEROS "(" INT ")"', 'ONES "(" INT ")"', 'EYE "(" INT ")"')
     def MatrixFunction(self, p):

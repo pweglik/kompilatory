@@ -321,11 +321,36 @@ class ListContent(Node):
         self.next_list_content = next_list_content
 
 
-class Primitive:
+class Primitive(Node):
     def __init__(self, value, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
+        if isinstance(value, int) or isinstance(value, float):
+            self.value = Number(value=value)
+            return
+
         self.value = value
+
+    def print(self, indent=0):
+        print("| " * indent + str(self.value.value if isinstance(self.value, Number) else self.value))
+
+    def graph(self, dot):
+        node = pydot.Node(
+            self.id,
+            label=str(
+                self.value.value if isinstance(self.value, Number) else self.value
+            ),
+            shape="ellipse",
+        )
+        dot.add_node(node)
+
+        if isinstance(self.value, Number):
+            node2 = self.value.graph(dot)
+            edge = pydot.Edge(self.id, self.value.id, label=0)
+            dot.add_edge(edge)
+
+        return node
 
 
 class MatrixFunction(Node):
@@ -373,9 +398,6 @@ class Number(Node):
         self.line_number = line_number
 
         self.value = value
-
-    # def __str__(self):
-    #     return str(self.value)
 
     def print(self, indent=0):
         print("| " * indent + str(self.value))
