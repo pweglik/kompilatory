@@ -49,11 +49,18 @@ class SimpleParser(Parser):
 
     @_('IF "(" Expression ")" Statement %prec IF_PREC')
     def SelectionStatement(self, p):
-        return AST.SelectionStatement(expression=p[2], statement_true=p[4], line_number=p.lineno)
+        return AST.SelectionStatement(
+            expression=p[2], statement_true=p[4], line_number=p.lineno
+        )
 
     @_('IF "(" Expression ")" Statement ELSE Statement')
     def SelectionStatement(self, p):
-        return AST.SelectionStatement(expression=p[2], statement_true=p[4], statement_false=p[6], line_number=p.lineno)
+        return AST.SelectionStatement(
+            expression=p[2],
+            statement_true=p[4],
+            statement_false=p[6],
+            line_number=p.lineno,
+        )
 
     @_('WHILE "(" Expression ")" Statement')
     def IterationStatement(self, p):
@@ -73,7 +80,9 @@ class SimpleParser(Parser):
 
     @_("RETURN Expression")
     def JumpStatement(self, p):
-        return AST.JumpStatement(name=p[0].upper(), expression=p[1], line_number=p.lineno)
+        return AST.JumpStatement(
+            name=p[0].upper(), expression=p[1], line_number=p.lineno
+        )
 
     @_("PRINT ListContent")
     def PrintStatement(self, p):
@@ -120,15 +129,15 @@ class SimpleParser(Parser):
 
     @_('"[" ListAccessElement "]"')
     def ListAccess(self, p):
-        return [p[1]]
+        return AST.ListAccess(element=p[1], line_number=p.lineno)
 
     @_('"[" ListAccessElement "]" ListAccess')
     def ListAccess(self, p):
-        return [p[1]] + p[3]
+        return AST.ListAccess(element=p[1], next_list_access=p[3], line_number=p.lineno)
 
     @_("INT", "ID")
     def ListAccessElement(self, p):
-        return p[0]
+        return AST.ListAccessElement(value=p[0])
 
     @_('RangeElement ":" RangeElement')
     def Range(self, p):
@@ -154,7 +163,9 @@ class SimpleParser(Parser):
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
-        return AST.ListContent(expression=p[0], next_list_content=p[2], line_number=p[0].line_number)
+        return AST.ListContent(
+            expression=p[0], next_list_content=p[2], line_number=p[0].line_number
+        )
 
     @_("Expression")
     def ListContent(self, p):

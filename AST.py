@@ -306,19 +306,59 @@ class TransposedExpression(Node):
 
 
 class ListAccess(Node):
-    def __init__(self, element, next_list_access, line_number=None):
+    def __init__(self, element, next_list_access=None, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.element = element
         self.next_list_access = next_list_access
 
+    def print(self, indent=0, first=False):
+        self.element.print(indent + 1, first)
+
+        if self.next_list_access:
+            self.next_list_access.print(indent)
+
+    def graph(self, dot, l_value_id):
+        node = pydot.Node(
+            self.id,
+            label="list access",
+            shape="ellipse",
+        )
+        dot.add_node(node)
+
+        edge = pydot.Edge(l_value_id, self.id, label=0)
+        dot.add_edge(edge)
+
+        node1 = self.element.graph(dot)
+        edge1 = pydot.Edge(self.id, self.element.id, label=0)
+        dot.add_edge(edge1)
+
+        if self.next_list_access:
+            self.next_list_access.graph(dot, l_value_id)
+        return node
+
 
 class ListAccessElement(Node):
     def __init__(self, value, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.value = value
 
+    def print(self, indent=0, first=False):
+        print("| " * indent + f'[{str(self.value)}]')
+
+
+    def graph(self, dot):
+        node = pydot.Node(
+            self.id,
+            label=f'[{self.value}]',
+            shape="ellipse",
+        )
+        dot.add_node(node)
+
+        return node
 
 class Range(Node):
     def __init__(self, from_expression, to_expression, step_expression=1, line_number=None):
@@ -487,13 +527,17 @@ class LValue(Node):
         self.list_access = list_access
 
     def print(self, indent=0):
-        if self.list_access:
-            self.list_access.print(indent)
         print("| " * indent + self.name)
+        if self.list_access:
+            self.list_access.print(indent, first=True)
 
     def graph(self, dot):
         node = pydot.Node(self.id, label=self.name, shape="ellipse")
         dot.add_node(node)
+
+        if self.list_access:
+            self.list_access.graph(dot, self.id)
+
         return node
 
 
