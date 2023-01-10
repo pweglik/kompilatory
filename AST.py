@@ -564,3 +564,4 @@ class Number(Node):
         node = pydot.Node(self.id, label=self.value, shape="ellipse")
         dot.add_node(node)
         return node
+    

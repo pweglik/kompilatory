@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import AST
+from SymbolTable import *
+
 
 class NodeVisitor(object):
 
@@ -23,24 +25,35 @@ class NodeVisitor(object):
                 elif isinstance(child, AST.Node):
                     self.visit(child)
 
-    # simpler version of generic_visit, not so general
-    #def generic_visit(self, node):
-    #    for child in node.children:
-    #        self.visit(child)
-
-
 
 class TypeChecker(NodeVisitor):
 
-    def visit_BinExpr(self, node):
-                                          # alternative usage,
-                                          # requires definition of accept method in class Node
-        type1 = self.visit(node.left)     # type1 = node.left.accept(self) 
-        type2 = self.visit(node.right)    # type2 = node.right.accept(self)
-        op    = node.op
-        # ... 
-        #
- 
+    def __init__(self):
+        super().__init__()
+        self.symbol_table = SymbolTable(None, 'main')
+        self.loopcount = 0
 
-    def visit_Variable(self, node):
-        pass
+    def visit_StatementList(self, node):
+        
+        for statement in node.statements:
+            self.visit(statement)
+
+
+
+    def visit_WhileStatement(self, node):
+        self.loopcount += 1
+
+        # self.symbol_table = self.symbol_table.pushScope("While")
+        self.visit(node.expression)
+        self.visit(node.statement)
+
+        self.loopcount -= 1
+        # self.symbol_table = self.symbol_table.popScope()
+
+    def visit_JumpStatement(self, node):
+        if node.name == "BREAK" or node.name == "CONTINUE":
+            if self.loopcount == 0:
+                print("Break/Continue outside of loop: ", node.line_number)
+
+        else: # RETURN
+            self.visit(node.expression)
