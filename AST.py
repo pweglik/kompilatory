@@ -53,7 +53,9 @@ class Statement(Node):
 
 
 class SelectionStatement(Node):
-    def __init__(self, expression, statement_true, statement_false=None, line_number=None):
+    def __init__(
+        self, expression, statement_true, statement_false=None, line_number=None
+    ):
         super().__init__()
         self.line_number = line_number
 
@@ -84,7 +86,6 @@ class SelectionStatement(Node):
         return main_node
 
 
-
 class WhileStatement(Node):
     def __init__(self, expression, statement, line_number):
         super().__init__()
@@ -108,6 +109,7 @@ class WhileStatement(Node):
         dot.add_edge(edge1)
         dot.add_edge(edge2)
         return main_node
+
 
 class ForStatement(Node):
     def __init__(self, identifier, elements, statement, line_number=None):
@@ -159,7 +161,7 @@ class JumpStatement(Node):
     def __init__(self, name, expression=None, line_number=None):
         super().__init__()
         self.line_number = line_number
-        
+
         self.name = name
         self.expression = expression
 
@@ -246,9 +248,6 @@ class BinaryOperation(Node):
         self.operator = operator
         self.second_expression = second_expression
 
-    # def __str__(self):
-    #     return f'{self.operator}{self.first_expression}{self.second_expression}'
-
     def print(self, indent=0):
         print("| " * indent + self.operator)
         self.first_expression.print(indent + 1)
@@ -288,9 +287,22 @@ class UnaryMinusOperation(Node):
 
 class TransposedExpression(Node):
     def __init__(self, expression, line_number=None):
+        super().__init__()
         self.line_number = line_number
 
         self.expression = expression
+
+    def print(self, indent=0):
+        print("| " * indent + "transposed")
+        self.expression.print(indent + 1)
+
+    def graph(self, dot):
+        node = pydot.Node(self.id, label="transposed", shape="ellipse")
+        dot.add_node(node)
+        node1 = self.expression.graph(dot)
+        edge = pydot.Edge(self.id, self.expression.id, label=0)
+        dot.add_edge(edge)
+        return node
 
 
 class ListAccess(Node):
@@ -309,27 +321,24 @@ class ListAccessElement(Node):
 
 
 class Range(Node):
-    def __init__(self, from_el, to_el, step_el=1, line_number=None):
+    def __init__(self, from_expression, to_expression, step_expression=1, line_number=None):
         super().__init__()
         self.line_number = line_number
 
-        self.from_el = from_el
-        self.to_el = to_el
-        self.step_el = step_el
+        self.from_expression = from_expression
+        self.to_expression = to_expression
+        self.step_expression = step_expression
 
     def print(self, indent=0):
         print("| " * indent + "range")
-        # print("| " * (indent + 1) + str(self.from_el))
-        self.from_el.print(indent + 1)
-        # print("| " * (indent + 1) + str(self.to_el))
-        self.to_el.print(indent + 1)
-        # self.step_el.print(indent + 1)
-        # TODO: check
+        self.from_expression.print(indent + 1)
+        self.to_expression.print(indent + 1)
+        self.step_expression.print(indent + 1)
 
     def graph(self, dot):
         node = pydot.Node(self.id, label="range", shape="ellipse")
         dot.add_node(node)
-        # node1 = self.from_el.graph(dot)
+        # node1 = self.from_expression.graph(dot)
         # node2 = self.to_el.graph(dot)
         # node3 = self.step_el.graph(dot)
         # edge1 = pydot.Edge(self.id, self.from_el.id, label=0)
@@ -350,7 +359,6 @@ class RangeElement(Node):
         self.value = value
 
     def print(self, indent=0):
-        # print("| " * indent + str(self.value))
         self.value.print(indent + 1)
 
     def graph(self, dot):
@@ -477,9 +485,6 @@ class LValue(Node):
 
         self.name = id
         self.list_access = list_access
-
-    # def __str__(self):
-    #     return self.id
 
     def print(self, indent=0):
         if self.list_access:

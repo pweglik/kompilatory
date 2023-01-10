@@ -12,32 +12,36 @@ if __name__ == "__main__":
     text = """
     # control flow instruction
 
+for a = 1:3
+{
+    a = 5;
+}
 
-# N = 10;
-# M = 20;
-# for i = 1:N {
-#     for j = i:M {
-#         print i, j;
-#     }
+# # N = 10;
+# # M = 20;
+# # for i = 1:N {
+# #     for j = i:M {
+# #         print i, j;
+# #     }
+# # }
+
+# if (k < 5)
+# {
+#     i = 1;
+# } else {
+#     a = 3;
 # }
 
-if (k < 5)
-{
-    i = 1;
-} else {
-    a = 3;
-}
-
-while(k>0) {
-    if(k<5)
-        i = 1;
-    else if(k<10)
-        i = 2;   
-    else
-        i = 3;
+# while(k>0) {
+#     if(k<5)
+#         i = 1;
+#     else if(k<10)
+#         i = 2;   
+#     else
+#         i = 3;
     
-    k = k - 1;
-}
+#     k = k - 1;
+# }
 
 
 D1 = A.+B' ; # add element-wise A with transpose of B
