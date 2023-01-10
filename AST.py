@@ -402,7 +402,10 @@ class RangeElement(Node):
         self.value = value
 
     def print(self, indent=0):
-        self.value.print(indent)
+        if type(self.value) == str:
+            print("| " * indent + str(self.value))
+        else:
+            self.value.print(indent)
 
     def graph(self, dot):
         node = pydot.Node(self.id, label='label', shape="ellipse")
