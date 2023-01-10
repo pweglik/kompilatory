@@ -371,14 +371,17 @@ class Range(Node):
 
     def print(self, indent=0):
         print("| " * indent + "range")
-        self.from_expression.print(indent + 1)
-        self.to_expression.print(indent + 1)
-        self.step_expression.print(indent + 1)
+        self.from_expression.print(indent+1)
+        self.to_expression.print(indent+1)
+        if type(self.step_expression == int):
+            print("| " * (indent + 1) + str(self.step_expression))
+        else:
+            self.step_expression.print(indent + 1)
 
     def graph(self, dot):
         node = pydot.Node(self.id, label="range", shape="ellipse")
         dot.add_node(node)
-        # node1 = self.from_expression.graph(dot)
+        node1 = self.from_expression.graph(dot)
         # node2 = self.to_el.graph(dot)
         # node3 = self.step_el.graph(dot)
         # edge1 = pydot.Edge(self.id, self.from_el.id, label=0)
@@ -399,11 +402,14 @@ class RangeElement(Node):
         self.value = value
 
     def print(self, indent=0):
-        self.value.print(indent + 1)
+        self.value.print(indent)
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label=str(self.value), shape="ellipse")
+        node = pydot.Node(self.id, label='label', shape="ellipse")
         dot.add_node(node)
+        node1 = self.value.graph(dot)
+        edge = pydot.Edge(self.id, self.value.id, label=0)
+        dot.add_edge(edge)
         return node
 
 
