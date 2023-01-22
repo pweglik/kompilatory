@@ -85,12 +85,12 @@ class SimpleLexer(Lexer):
     def letters_after_number(self, token):
         raise ValueError(f"Illegal number (E2): '{token.value}'!")
 
-    @_(r"(([1-9][0-9]*)|0)?\.[0-9]*(E-?[1-9][0-9]*)?")
+    @_(r"(?:(?:[1-9][0-9]*)|0)?\.[0-9]*(?:E-?[1-9][0-9]*)?")
     def FLOAT(self, t):
-        t.value = int(t.value)  # Convert to a numeric value
+        t.value = float(t.value)  # Convert to a numeric value
         return t
 
-    @_(r"([1-9][0-9]*)|0")
+    @_(r"(?:[1-9][0-9]*)|0")
     def INT(self, t):
         t.value = int(t.value)  # Convert to a numeric value
         return t

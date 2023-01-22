@@ -141,11 +141,18 @@ class SimpleParser(Parser):
 
     @_('RangeElement ":" RangeElement')
     def Range(self, p):
-        return AST.Range(from_expression=p[0], to_expression=p[2], line_number=p[0].line_number)
+        return AST.Range(
+            from_expression=p[0], to_expression=p[2], line_number=p[0].line_number
+        )
 
     @_('RangeElement ":" RangeElement ":" RangeElement')
     def Range(self, p):
-        return AST.Range(from_expression=p[0], to_expression=p[2], step_expression=p[4], line_number=p[0].line_number)
+        return AST.Range(
+            from_expression=p[0],
+            to_expression=p[2],
+            step_expression=p[4],
+            line_number=p[0].line_number,
+        )
 
     @_("Number")
     def RangeElement(self, p):

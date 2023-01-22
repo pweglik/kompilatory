@@ -42,16 +42,6 @@ class StatementList(
         return main_node
 
 
-class Statement(Node):
-    def __init__(self, statement, line_number=None):
-        self.line_number = line_number
-
-        self.statement = statement
-
-    def print(self, indent=0):
-        self.statement.print(indent)
-
-
 class SelectionStatement(Node):
     def __init__(
         self, expression, statement_true, statement_false=None, line_number=None
@@ -184,9 +174,31 @@ class PrintStatement(Node):
 
         self.expression = expression
 
+class LValue(Node):
+    def __init__(self, id, list_access=None, line_number=None):
+        super().__init__()
+        self.line_number = line_number
+
+        self.name = id
+        self.list_access = list_access
+
+    def print(self, indent=0):
+        print("| " * indent + self.name)
+        if self.list_access:
+            self.list_access.print(indent, first=True)
+
+    def graph(self, dot):
+        node = pydot.Node(self.id, label=self.name, shape="ellipse")
+        dot.add_node(node)
+
+        if self.list_access:
+            self.list_access.graph(dot, self.id)
+
+        return node
+
 
 class AssignmentStatement(Node):
-    def __init__(self, identifier, ass_operator, expression, line_number):
+    def __init__(self, identifier: LValue, ass_operator: str, expression, line_number: int):
         super().__init__()
         self.line_number = line_number
 
@@ -347,21 +359,23 @@ class ListAccessElement(Node):
         self.value = value
 
     def print(self, indent=0, first=False):
-        print("| " * indent + f'[{str(self.value)}]')
-
+        print("| " * indent + f"[{str(self.value)}]")
 
     def graph(self, dot):
         node = pydot.Node(
             self.id,
-            label=f'[{self.value}]',
+            label=f"[{self.value}]",
             shape="ellipse",
         )
         dot.add_node(node)
 
         return node
 
+
 class Range(Node):
-    def __init__(self, from_expression, to_expression, step_expression=1, line_number=None):
+    def __init__(
+        self, from_expression, to_expression, step_expression=1, line_number=None
+    ):
         super().__init__()
         self.line_number = line_number
 
@@ -371,8 +385,8 @@ class Range(Node):
 
     def print(self, indent=0):
         print("| " * indent + "range")
-        self.from_expression.print(indent+1)
-        self.to_expression.print(indent+1)
+        self.from_expression.print(indent + 1)
+        self.to_expression.print(indent + 1)
         if type(self.step_expression == int):
             print("| " * (indent + 1) + str(self.step_expression))
         else:
@@ -408,7 +422,7 @@ class RangeElement(Node):
             self.value.print(indent)
 
     def graph(self, dot):
-        node = pydot.Node(self.id, label='label', shape="ellipse")
+        node = pydot.Node(self.id, label="label", shape="ellipse")
         dot.add_node(node)
         node1 = self.value.graph(dot)
         edge = pydot.Edge(self.id, self.value.id, label=0)
@@ -424,6 +438,7 @@ class List(Node):
         self.content = content
 
     def print(self, indent=0):
+        print("| " * indent + "list")
         self.content.print(indent)
 
     def graph(self, dot):
@@ -527,27 +542,7 @@ class MatrixFunction(Node):
         return main_node
 
 
-class LValue(Node):
-    def __init__(self, id, list_access=None, line_number=None):
-        super().__init__()
-        self.line_number = line_number
 
-        self.name = id
-        self.list_access = list_access
-
-    def print(self, indent=0):
-        print("| " * indent + self.name)
-        if self.list_access:
-            self.list_access.print(indent, first=True)
-
-    def graph(self, dot):
-        node = pydot.Node(self.id, label=self.name, shape="ellipse")
-        dot.add_node(node)
-
-        if self.list_access:
-            self.list_access.graph(dot, self.id)
-
-        return node
 
 
 class Number(Node):
@@ -564,4 +559,3 @@ class Number(Node):
         node = pydot.Node(self.id, label=self.value, shape="ellipse")
         dot.add_node(node)
         return node
-    
