@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from Interpreter import Interpreter
 from TypeChecker import TypeChecker
 from SimpleParser import SimpleParser
 from SimpleLexer import SimpleLexer
@@ -9,16 +10,6 @@ if __name__ == "__main__":
     lexer = SimpleLexer()
     parser = SimpleParser()
 
-    text = """    
-x = zeros(4);
-x[0][1] = 2;
-
-# x = ones(3,5)
-# z = x[7,10]
-# v = x[2,3,4]
-
-
-"""
 
     tokens = lexer.tokenize(text)
 
@@ -32,4 +23,9 @@ x[0][1] = 2;
     print("\nFinished type checking!\n")
 
     for error in typeChecker.errors:
-        print(f"Error: {error}")
+        print(f'Error: {error}')
+
+    print('\nInterpreting...!\n')
+    interpreter = Interpreter()
+    print(type(ast))
+    interpreter.visit(ast)
