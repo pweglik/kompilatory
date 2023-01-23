@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 
+from typing import Union
+
+
 class Symbol:
     pass
 
@@ -32,10 +35,10 @@ class SymbolTable(object):
         self.name = name
         self.dict = {}
 
-    def put(self, name: str, symbol: VarSymbol):
+    def put(self, name: str, symbol: Union[VarSymbol, None]):
         self.dict[name] = symbol
 
-    def get(self, name: str) -> VarSymbol:
+    def get(self, name: str) -> Union[VarSymbol, None]:
         if name in self.dict.keys():
             return self.dict[name]
         elif self.parent is not None:

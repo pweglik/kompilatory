@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import Union
 import AST
 from SymbolTable import *
 from collections import defaultdict
@@ -89,7 +90,7 @@ def type_to_str(elem):
 
 
 class NodeVisitor(object):
-    def visit(self, node: AST.Node):
+    def visit(self, node: AST.Node) -> Union[VarSymbol, None]:
         method = "visit_" + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
         return visitor(node)
@@ -152,13 +153,17 @@ class TypeChecker(NodeVisitor):
                 )
 
     def visit_AssignmentStatement(self, node):
-        type_ = self.visit(node.expression)
-        if self.symbol_table.get(node.identifier.name) is None:
+        symbol = self.visit(node.expression)
+        if symbol == None:
+            raise ValueError("Expression isit return None instead of VarSymbol!")
+
+        exisiting_symbol = self.symbol_table.get(node.identifier.name)
+        if exisiting_symbol is None:
             self.symbol_table.put(
-                node.identifier.name, VarSymbol(node.identifier.name, type_)
+                node.identifier.name, symbol
             )
         else:
-            if self.symbol_table.get(node.identifier.name).type_ != type_:
+            if exisiting_symbol.type_ != symbol.type_:
                 self.errors.append(
                     f"Type mismatch in line {node.line_number} : {self.symbol_table.dict[node.identifier.name].type_} = {type_}"
                 )
