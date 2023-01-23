@@ -9,27 +9,30 @@ if __name__ == "__main__":
     parser = SimpleParser()
 
     text = \
-    """
-#     C = [1, 2, 3];
-#     A = zeros(1);
-#     A = zeros(5);  # create 5x5 matrix filled with zeros
-# B = ones(7);   # create 7x7 matrix filled with ones
-# I = eye(10);   # create 10x10 matrix filled with ones on diagonal and zeros elsewhere
+    """    
+x = 0;
+y = zeros(5);
+z = x + y;
 
-# E1 = [ [ 1, 2, 3],
-#          [ 4, 5, 6],
-#        [ 7, 8, 9] ];
+x = eye(5);
+y = eye(8);
+z = x .+ y;
 
-A = 2 + 3;
-# B = [1, 2];
-# C = [1, 2, 3];
-# D = B + C;
+x = [ 1,2,3,4,5 ];
+y = [ [1,2,3,4,5],
+      [1,2,3,4,5] ];
+z = x + y;
+
+# x = zeros(5);
+# y = zeros(5);
+# z = x + y;
+
+# x = ones(3,5)
+# z = x[7,10]
+# v = x[2,3,4]
 
 
-# A[1][3] = 0;
-
-
-    """
+"""
 
     tokens = lexer.tokenize(text)
 

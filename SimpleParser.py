@@ -104,7 +104,7 @@ class SimpleParser(Parser):
         "Expression LESS Expression",
     )
     def Expression(self, p):
-        return AST.BinaryOperation(p[0], p[1], p[2])
+        return AST.BinaryOperation(p[0], p[1], p[2], line_number=p.lineno)
 
     @_(
         '"(" Expression ")"',
