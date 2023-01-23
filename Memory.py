@@ -1,28 +1,40 @@
-
-
 class Memory:
+    def __init__(self):  # memory name
+        self.memory = {}
 
-    def __init__(self, name): # memory name
+    def has_key(self, name):
+        return name in self.memory.keys()
 
-    def has_key(self, name):  # variable name
+    def get(self, name):
+        return self.memory.get(name, None)
 
-    def get(self, name):         # gets from memory current value of variable <name>
-
-    def put(self, name, value):  # puts into memory current value of variable <name>
+    def set(self, name, value):
+        self.memory[name] = value
 
 
 class MemoryStack:
-                                                                             
-    def __init__(self, memory=None): # initialize memory stack with memory <memory>
+    def __init__(self, memory=None):
+        self.stack = [Memory()]
 
-    def get(self, name):             # gets from memory stack current value of variable <name>
+    def get_variable(self, name):
+        for memory in reversed(self.stack):
+            res = memory.get(name)
+            if res is not None:
+                return res
 
-    def insert(self, name, value): # inserts into memory stack variable <name> with value <value>
+        return None
 
-    def set(self, name, value): # sets variable <name> to value <value>
+    def set_in_top(self, name, value):
+        self.stack[0].set(name, value)
 
-    def push(self, memory): # pushes memory <memory> onto the stack
+    def set_variable(self, name, value):
+        for memory in reversed(self.stack):
+            if memory.has_key(name):
+                return memory.set(name, value)
+        self.set_in_top(name, value)
 
-    def pop(self):          # pops the top memory from the stack
+    def push_memory_to_stack(self):
+        self.stack.append(Memory())
 
-
+    def pop_memory_from_stack(self):
+        self.stack.pop()
