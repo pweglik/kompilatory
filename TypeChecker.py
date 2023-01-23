@@ -63,16 +63,8 @@ type_map["!="]["bool"]["bool"] = "bool"
 type_map["!="]["string"]["string"] = "bool"
 
 type_map[".+"]["vector"]["vector"] = "vector"
-type_map[".+"]["vector"]["int"] = "vector"
-type_map[".+"]["vector"]["float"] = "vector"
-type_map[".+"]["int"]["vector"] = "vector"
-type_map[".+"]["float"]["vector"] = "vector"
 
 type_map[".-"]["vector"]["vector"] = "vector"
-type_map[".-"]["vector"]["int"] = "vector"
-type_map[".-"]["vector"]["float"] = "vector"
-type_map[".-"]["int"]["vector"] = "vector"
-type_map[".-"]["float"]["vector"] = "vector"
 
 type_map[".*"]["vector"]["vector"] = "vector"
 type_map[".*"]["vector"]["int"] = "vector"
@@ -83,8 +75,6 @@ type_map[".*"]["float"]["vector"] = "vector"
 type_map["./"]["vector"]["vector"] = "vector"
 type_map["./"]["vector"]["int"] = "vector"
 type_map["./"]["vector"]["float"] = "vector"
-type_map["./"]["int"]["vector"] = "vector"
-type_map["./"]["float"]["vector"] = "vector"
 
 
 class NodeVisitor(object):
