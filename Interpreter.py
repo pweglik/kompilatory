@@ -30,13 +30,49 @@ class Interpreter(object):
     def visit(self, node: AST.AssignmentStatement):
         self.memory.set_variable(node.identifier.name, self.visit(node.expression))
 
-    # @when(AST.BinaryOperation)
-    # def visit(self, node: AST.BinaryOperation):
-    #     left = node.left_expression.accept(self)
-    #     right = node.right_expression.accept(self)
+    @when(AST.WhileStatement)
+    def visit(self, node: AST.WhileStatement):
+        while self.visit(node.expression):
+            self.visit(node.statement)
 
-    #     print("XDDD", node.operator)
-    #     # if node.operator == 'ADD':
+    @when(AST.BinaryOperation)
+    def visit(self, node: AST.BinaryOperation):
+        left = self.visit(node.left_expression)
+        right = self.visit(node.right_expression)
+
+        if node.operator == '+':
+            return left + right
+        elif node.operator == '-':
+            return left - right
+        elif node.operator == '*':
+            return left * right
+        elif node.operator == '/':
+            return left / right
+        elif node.operator == '.+':
+            pass
+            # TODO
+        elif node.operator == '.-':
+            pass
+            # TODO
+        elif node.operator == '.*':
+            pass
+            # TODO
+        elif node.operator == './':
+            pass
+            # TODO
+        elif node.operator == '==':
+            return left == right
+        elif node.operator == '!=':
+            return left != right
+        elif node.operator == '>=':
+            return left >= right
+        elif node.operator == '<=':
+            return left <= right
+        elif node.operator == '<':
+            return left < right
+        elif node.operator == '>':
+            return left > right
+        
 
     @when(AST.Primitive)
     def visit(self, node: AST.Primitive):

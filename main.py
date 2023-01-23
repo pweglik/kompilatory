@@ -10,6 +10,17 @@ if __name__ == "__main__":
     lexer = SimpleLexer()
     parser = SimpleParser()
 
+    text = \
+    """
+    a = 0;
+    b = 1;
+    while (b < 1000) {
+        print b;
+        b = b + a;
+        a = b - a;
+    }
+
+    """
 
     tokens = lexer.tokenize(text)
 
@@ -27,5 +38,4 @@ if __name__ == "__main__":
 
     print('\nInterpreting...!\n')
     interpreter = Interpreter()
-    print(type(ast))
     interpreter.visit(ast)
