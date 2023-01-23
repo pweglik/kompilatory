@@ -84,8 +84,8 @@ def type_to_str(elem):
         return "int"
     elif type(elem) == float:
         return "float"
-    else:
-        return None
+    elif isinstance(elem, VarSymbol):
+        return elem.type
 
 
 class NodeVisitor(object):
@@ -154,9 +154,9 @@ class TypeChecker(NodeVisitor):
     def visit_AssignmentStatement(self, node):
         type_ = self.visit(node.expression)
         if self.symbol_table.get(node.identifier.name) is None:
-            self.symbol_table.put(node.identifier.name, VarSymbol(
-                node.identifier.name, type_
-            ))
+            self.symbol_table.put(
+                node.identifier.name, VarSymbol(node.identifier.name, type_)
+            )
         else:
             if self.symbol_table.get(node.identifier.name).type_ != type_:
                 self.errors.append(
@@ -165,7 +165,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_LValue(self, node):
         if not self.symbol_table.get(node.name) is None:
-            return self.symbol_table.get(node.name).type_
+            return self.symbol_table.get(node.name)
         else:
             self.errors.append(
                 f"Variable {node.name} not declared in line {node.line_number} "
@@ -173,32 +173,24 @@ class TypeChecker(NodeVisitor):
             return None
 
     def visit_Number(self, node):
-        return type_to_str(node.value)
+        print(type(node.value))
+        print(type_to_str(node.value))
+
+        return VarSymbol(None, type_=type_to_str(node.value))
 
     def visit_Primitive(self, node):
         if isinstance(node.value, AST.Node):
             return self.visit(node.value)
         else:
-            return "string"
+            return VarSymbol(None, type_to_str(node))
 
     def visit_MatrixFunction(self, node):
-        visit_type = self.visit(node.size)
-        if visit_type != "int":
-            self.errors.append(
-                f"Matrix size must be an integer but is {visit_type} in line {node.line_number}"
-            )
-
-        return "vector"
+        self.visit(node.size)
+        return VarSymbol(None, "vector", (node.size, node.size))
 
     def visit_Vector(self, node):
         content = node.content
-
-
-        if content is None:
-            return None
-        if isinstance(content, list):
-            size = len(content)
-        
+        size = len(content)
 
         if size > 0:
             types = []
@@ -206,38 +198,37 @@ class TypeChecker(NodeVisitor):
                 if isinstance(element, AST.Node):
                     element_type = self.visit(element)
                 else:
-                    element_type = type_to_str(element)
+                    element_type = VarSymbol(None, type_to_str(element))
                 types += [element_type]
 
-            print(types)
-            print(set(types))
-            if len(set(types)) == 1:
-                type_ = types[0]
-                if type_ in ["int", "float", "string"]:
-                    return "vector", [size]
+            if all(x == types[0] for x in types):
+                if isinstance(types[0], VarSymbol):
+                    if types[0].shape is None:
+                        return VarSymbol(None, "vector", (size,))
+                    else:
+                        return VarSymbol(None, "vector", (size,) + types[0].shape)
                 else:
-                    return "vector",[size]+type_[1]
+                    return VarSymbol(None, "vector", (size,))
             else:
                 self.errors.append(
-                    f"Type mismatch in line {node.line_number} : {types}. Values in vector should be of the same type."
+                    f"Vector must have same type elements in line {node.line_number}"
                 )
                 return None
-            
 
     def visit_BinaryOperation(self, node):
-        left_type = self.visit(node.left_expression)
-        right_type = self.visit(node.right_expression)
-
-        if left_type is None or right_type is None:
+        left_symbol = self.visit(node.left_expression)
+        right_symbol = self.visit(node.right_expression)
+        
+        if left_symbol is None or right_symbol is None:
             return None
-
-        if left_type == right_type:
-            return left_type
-        else:
-            try:
-                return type_map[node.op][left_type][right_type]
-            except KeyError:
+        
+        if left_symbol.type_ == "vector" and right_symbol.type_ == "vector":
+            # TODO HERE
+            if left_symbol.shape == right_symbol.shape:
+                return VarSymbol(None, "vector", left_symbol.shape)
+            else:
                 self.errors.append(
-                    f"Type mismatch in line {node.line_number} : {left_type} {node.op} {right_type}"
+                    f"Vector shapes must be the same in line {node.line_number}"
                 )
                 return None
+        return VarSymbol(None, type_map[left_symbol.type_][node.operator][right_symbol.type_])

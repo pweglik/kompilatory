@@ -10,15 +10,20 @@ if __name__ == "__main__":
 
     text = \
     """
-    C = [1, 2, 3.5];
-    A = zeros(1);
-    A = zeros(5);  # create 5x5 matrix filled with zeros
-B = ones(7);   # create 7x7 matrix filled with ones
-I = eye(10);   # create 10x10 matrix filled with ones on diagonal and zeros elsewhere
+#     C = [1, 2, 3];
+#     A = zeros(1);
+#     A = zeros(5);  # create 5x5 matrix filled with zeros
+# B = ones(7);   # create 7x7 matrix filled with ones
+# I = eye(10);   # create 10x10 matrix filled with ones on diagonal and zeros elsewhere
 
-E1 = [ [ 1, 2, 3],
-       [ 4, 5, 6],
-       [ 7, 8, 9] ];
+# E1 = [ [ 1, 2, 3],
+#          [ 4, 5, 6],
+#        [ 7, 8, 9] ];
+
+A = 2 + 3;
+# B = [1, 2];
+# C = [1, 2, 3];
+# D = B + C;
 
 
 # A[1][3] = 0;
@@ -36,7 +41,7 @@ E1 = [ [ 1, 2, 3],
     print('\nChecking syntax...\n')
     typeChecker = TypeChecker()
     typeChecker.visit(ast)
-    print('\nOkay!\n')
+    print('\nFinished type checking!\n')
 
     for error in typeChecker.errors:
         print(f'Error: {error}')
