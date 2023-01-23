@@ -176,11 +176,11 @@ class SimpleParser(Parser):
 
     @_("Expression")
     def ListContent(self, p):
-        return AST.ListContent(expression=p[0])
+        return AST.ListContent(expression=p[0], line_number=p[0].line_number)
 
     @_("Number", "STRING")
     def Primitive(self, p):
-        return AST.Primitive(value=p[0])
+        return AST.Primitive(value=p[0], line_number=p.lineno)
 
     @_('ZEROS "(" Expression ")"', 'ONES "(" Expression ")"', 'EYE "(" Expression ")"')
     def MatrixFunction(self, p):

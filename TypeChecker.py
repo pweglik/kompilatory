@@ -204,4 +204,24 @@ class TypeChecker(NodeVisitor):
         return 'vector'
 
     def visit_List(self, node):
+        
+
         return 'vector'
+
+    def visit_BinaryOperation(self, node):
+        left_type = self.visit(node.left)
+        right_type = self.visit(node.right)
+
+        if left_type is None or right_type is None:
+            return None
+
+        if left_type == right_type:
+            return left_type
+        else:
+            try:
+                return type_map[node.op][left_type][right_type]
+            except KeyError:
+                self.errors.append(
+                    f"Type mismatch in line {node.line_number} : {left_type} {node.op} {right_type}"
+                )
+                return None
