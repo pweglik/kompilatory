@@ -55,6 +55,7 @@ type_map["=="]["float"]["int"] = "bool"
 type_map["=="]["float"]["float"] = "bool"
 type_map["=="]["bool"]["bool"] = "bool"
 type_map["=="]["string"]["string"] = "bool"
+type_map["=="]["vector"]["vector"] = "bool"
 
 type_map["!="]["int"]["int"] = "bool"
 type_map["!="]["int"]["float"] = "bool"
@@ -62,6 +63,7 @@ type_map["!="]["float"]["int"] = "bool"
 type_map["!="]["float"]["float"] = "bool"
 type_map["!="]["bool"]["bool"] = "bool"
 type_map["!="]["string"]["string"] = "bool"
+type_map["!="]["vector"]["vector"] = "bool"
 
 type_map[".+"]["vector"]["vector"] = "vector"
 
@@ -168,7 +170,18 @@ class TypeChecker(NodeVisitor):
             )
             return None
         else:
-            return symbol
+            if node.list_access is None:
+                return symbol
+            else:
+                if symbol.type_ != "vector":
+                    self.errors.append(
+                        f"Variable {node.name} is not a vector in line {node.line_number}"
+                    )
+                    return None
+                else:
+                    return VarSymbol(symbol.name, symbol.type_, symbol.shape[1:])
+
+
 
     def visit_Number(self, node):
         return VarSymbol(None, type_=type_to_str(node.value))

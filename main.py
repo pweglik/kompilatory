@@ -4,28 +4,14 @@ from TypeChecker import TypeChecker
 from SimpleParser import SimpleParser
 from SimpleLexer import SimpleLexer
 
+
 if __name__ == "__main__":
     lexer = SimpleLexer()
     parser = SimpleParser()
 
-    text = \
-    """    
-x = 0;
-y = zeros(5);
-z = x + y;
-
-x = eye(5);
-y = eye(8);
-z = x .+ y;
-
-x = [ 1,2,3,4,5 ];
-y = [ [1,2,3,4,5],
-      [1,2,3,4,5] ];
-z = x + y;
-
-# x = zeros(5);
-# y = zeros(5);
-# z = x + y;
+    text = """    
+x = zeros(4);
+x[0][1] = 2;
 
 # x = ones(3,5)
 # z = x[7,10]
@@ -36,15 +22,14 @@ z = x + y;
 
     tokens = lexer.tokenize(text)
 
-
     ast = parser.parse(tokens)
 
     ast.print()
 
-    print('\nChecking syntax...\n')
+    print("\nChecking syntax...\n")
     typeChecker = TypeChecker()
     typeChecker.visit(ast)
-    print('\nFinished type checking!\n')
+    print("\nFinished type checking!\n")
 
     for error in typeChecker.errors:
-        print(f'Error: {error}')
+        print(f"Error: {error}")
