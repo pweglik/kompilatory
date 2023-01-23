@@ -86,7 +86,7 @@ class SimpleParser(Parser):
 
     @_("PRINT ListContent")
     def PrintStatement(self, p):
-        return "PRINT", p[1]
+        return AST.PrintStatement(expression=p[1], line_number=p.lineno)
 
     @_(
         "Expression ADD Expression",
@@ -178,7 +178,11 @@ class SimpleParser(Parser):
     def ListContent(self, p):
         return AST.ListContent(expression=p[0], line_number=p[0].line_number)
 
-    @_("Number", "STRING")
+    @_("Number")
+    def Primitive(self, p):
+        return AST.Primitive(value=p[0], line_number=p[0].line_number)
+
+    @_("STRING")
     def Primitive(self, p):
         return AST.Primitive(value=p[0], line_number=p.lineno)
 
