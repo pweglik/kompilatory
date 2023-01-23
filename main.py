@@ -12,13 +12,16 @@ if __name__ == "__main__":
 
     text = \
     """
-    a = 0;
-    b = 1;
-    while (b < 1000) {
-        print b;
-        b = b + a;
-        a = b - a;
-    }
+    n = 10;
+    for i = 1:n print "*" * i;
+
+    # a = 0;
+    # b = 1;
+    # while (b < 1000) {
+    #     print b;
+    #     b = a + b;
+    #     a = b - a;
+    # }
 
     """
 
@@ -36,6 +39,6 @@ if __name__ == "__main__":
     for error in typeChecker.errors:
         print(f'Error: {error}')
 
-    print('\nInterpreting...!\n')
+    print('\nInterpreting...\n')
     interpreter = Interpreter()
     interpreter.visit(ast)

@@ -4,6 +4,7 @@ from Memory import MemoryStack
 from Exceptions import *
 from VisitDecorators import when, on
 import sys
+import numpy as np
 
 sys.setrecursionlimit(10000)
 
@@ -35,52 +36,86 @@ class Interpreter(object):
         while self.visit(node.expression):
             self.visit(node.statement)
 
+    @when(AST.ForStatement)
+    def visit(self, node: AST.ForStatement):
+        list_to_iterate = self.visit(node.elementsOrRange)
+
+        for el in list_to_iterate:
+            self.memory.set_variable(self.visit(node.identifier), el)
+            self.visit(node.statement)
+
     @when(AST.BinaryOperation)
     def visit(self, node: AST.BinaryOperation):
         left = self.visit(node.left_expression)
         right = self.visit(node.right_expression)
 
-        if node.operator == '+':
+        if node.operator == "+":
             return left + right
-        elif node.operator == '-':
+        elif node.operator == "-":
             return left - right
-        elif node.operator == '*':
+        elif node.operator == "*":
             return left * right
-        elif node.operator == '/':
+        elif node.operator == "/":
             return left / right
-        elif node.operator == '.+':
+        elif node.operator == ".+":
             pass
             # TODO
-        elif node.operator == '.-':
+        elif node.operator == ".-":
             pass
             # TODO
-        elif node.operator == '.*':
+        elif node.operator == ".*":
             pass
             # TODO
-        elif node.operator == './':
+        elif node.operator == "./":
             pass
             # TODO
-        elif node.operator == '==':
+        elif node.operator == "==":
             return left == right
-        elif node.operator == '!=':
+        elif node.operator == "!=":
             return left != right
-        elif node.operator == '>=':
+        elif node.operator == ">=":
             return left >= right
-        elif node.operator == '<=':
+        elif node.operator == "<=":
             return left <= right
-        elif node.operator == '<':
+        elif node.operator == "<":
             return left < right
-        elif node.operator == '>':
+        elif node.operator == ">":
             return left > right
-        
 
     @when(AST.Primitive)
     def visit(self, node: AST.Primitive):
-        return node.value.value if isinstance(node.value, AST.Number) else node.value
+        return self.visit(node.value) if isinstance(node.value, AST.Number) else node.value
+
+    @when(AST.Number)
+    def visit(self, node: AST.Number):
+        return node.value
 
     @when(AST.LValue)
     def visit(self, node: AST.LValue):
         return self.memory.get_variable(node.name)
+
+    @when(AST.Range)
+    def visit(self, node: AST.Range):
+        return np.arange(
+                    self.visit(node.from_expression),
+                    self.visit(node.to_expression),
+                    self.visit(node.step_expression),
+                )
+
+    @when(AST.RangeElement)
+    def visit(self, node: AST.RangeElement):
+        if isinstance(node.value, str):
+            return self.memory.get_variable(node.value)
+            
+        return self.visit(node.value)
+
+    @when(AST.Vector)
+    def visit(self, node: AST.Vector):
+        return node.content
+
+    @when(AST.LabelNode)
+    def visit(self, node: AST.LabelNode):
+        return node.name
 
     #  @when(AST.BinOp)
     # def visit(self, node):
