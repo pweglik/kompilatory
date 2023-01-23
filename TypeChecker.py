@@ -159,18 +159,18 @@ class TypeChecker(NodeVisitor):
     def visit_AssignmentStatement(self, node):
         type_ = self.visit(node.expression)
         if self.symbol_table.get(node.identifier.name) is None:
-            self.symbol_table.dict[node.identifier.name] = VarSymbol(
+            self.symbol_table.put(node.identifier.name, VarSymbol(
                 node.identifier.name, type_
-            )
+            ))
         else:
-            if self.symbol_table.dict[node.identifier.name].type_ != type_:
+            if self.symbol_table.get(node.identifier.name).type_ != type_:
                 self.errors.append(
                     f"Type mismatch in line {node.line_number} : {self.symbol_table.dict[node.identifier.name].type_} = {type_}"
                 )
 
     def visit_LValue(self, node):
         if not self.symbol_table.get(node.name) is None:
-            return self.symbol_table.dict[node.name].type_
+            return self.symbol_table.get(node.name).type_
         else:
             self.errors.append(
                 f"Variable {node.name} not declared in line {node.line_number} "

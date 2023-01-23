@@ -34,14 +34,11 @@ A[1][3] = 0;
     ast = parser.parse(tokens)
 
     ast.print()
-    dot = pydot.Dot(graph_type="digraph")
-    node = ast.graph(dot)
 
+    print('\nChecking syntax...\n')
     typeChecker = TypeChecker()
     typeChecker.visit(ast)
+    print('\nOkay!\n')
 
     for error in typeChecker.errors:
         print(f'Error: {error}')
-
-    # dot.write_pdf('ast.pdf')
-    dot.write_png("ast.png")
