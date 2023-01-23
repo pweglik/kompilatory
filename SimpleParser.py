@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from lexer import SimpleLexer
+from SimpleLexer import SimpleLexer
 from sly import Parser
 import AST
 

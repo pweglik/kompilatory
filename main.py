@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from TypeChecker import TypeChecker
-from my_parser import SimpleParser
-from lexer import SimpleLexer
-from draw_ast import draw_ast
+from SimpleParser import SimpleParser
+from SimpleLexer import SimpleLexer
 
 if __name__ == "__main__":
     lexer = SimpleLexer()
@@ -11,16 +10,6 @@ if __name__ == "__main__":
 
     text = \
     """
-<<<<<<< Updated upstream
-
-        a = 0;
-        b = 1;
-        while (b < 1000) {
-            print b;
-            b += a;
-            a = b - a;
-        }
-=======
     C = [1, 2, 3.5];
     A = zeros(1);
     A = zeros(5);  # create 5x5 matrix filled with zeros
@@ -34,7 +23,6 @@ E1 = [ [ 1, 2, 3],
 
 # A[1][3] = 0;
 
->>>>>>> Stashed changes
 
     """
 
