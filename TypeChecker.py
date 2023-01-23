@@ -233,4 +233,4 @@ class TypeChecker(NodeVisitor):
                     f"Vector shapes must be the same in line {node.line_number}"
                 )
                 return None
-        return VarSymbol(None, type_map[left_symbol.type_][node.operator][right_symbol.type_])
+        return VarSymbol(None, type_map[node.operator][left_symbol.type_][right_symbol.type_])
