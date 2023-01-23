@@ -178,9 +178,6 @@ class TypeChecker(NodeVisitor):
             return None
 
     def visit_Number(self, node):
-        print(type(node.value))
-        print(type_to_str(node.value))
-
         return VarSymbol(None, type_=type_to_str(node.value))
 
     def visit_Primitive(self, node):
