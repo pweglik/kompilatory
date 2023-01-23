@@ -23,6 +23,8 @@ type_map["*"]["int"]["int"] = "int"
 type_map["*"]["int"]["float"] = "float"
 type_map["*"]["float"]["int"] = "float"
 type_map["*"]["float"]["float"] = "float"
+type_map["*"]["string"]["int"] = "string"
+type_map["*"]["int"]["string"] = "string"
 
 type_map["/"]["int"]["int"] = "int"
 type_map["/"]["int"]["float"] = "float"
