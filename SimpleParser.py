@@ -9,7 +9,6 @@ scanner_obj = SimpleLexer()
 
 class SimpleParser(Parser):
     tokens = SimpleLexer.tokens
-    debugfile = "debug.log"
 
     precedence = (
         ("nonassoc", IF_PREC),
@@ -84,7 +83,7 @@ class SimpleParser(Parser):
             name=p[0].upper(), expression=p[1], line_number=p.lineno
         )
 
-    @_("PRINT ListContent")
+    @_("PRINT Expression")
     def PrintStatement(self, p):
         return AST.PrintStatement(expression=p[1], line_number=p.lineno)
 

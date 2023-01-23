@@ -107,8 +107,7 @@ class PrintStatement(Node):
 
     def print(self, indent=0):
         print("| " * indent + "print")
-
-        self.expression.print(indent)
+        self.expression.print(indent + 1)
 
 
 class LValue(Node):
