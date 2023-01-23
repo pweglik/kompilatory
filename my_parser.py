@@ -166,17 +166,15 @@ class SimpleParser(Parser):
 
     @_('"[" ListContent "]"')
     def List(self, p):
-        return AST.List(content=p[1], line_number=p.lineno)
+        return AST.Vector(content=p[1], line_number=p.lineno)
 
     @_('Expression "," ListContent')
     def ListContent(self, p):
-        return AST.ListContent(
-            expression=p[0], next_list_content=p[2], line_number=p[0].line_number
-        )
+        return [p[0]] + p[2]
 
     @_("Expression")
     def ListContent(self, p):
-        return AST.ListContent(expression=p[0], line_number=p[0].line_number)
+        return [p[0]]
 
     @_("Number")
     def Primitive(self, p):

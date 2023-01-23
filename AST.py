@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import pydot
 
 
 class Node(ABC):
@@ -107,9 +106,10 @@ class PrintStatement(Node):
         self.expression = expression
 
     def print(self, indent=0):
-        print("| " * indent + 'print')
+        print("| " * indent + "print")
 
         self.expression.print(indent)
+
 
 class LValue(Node):
     def __init__(self, id, list_access=None, line_number=None):
@@ -126,7 +126,9 @@ class LValue(Node):
 
 
 class AssignmentStatement(Node):
-    def __init__(self, identifier: LValue, ass_operator: str, expression, line_number: int):
+    def __init__(
+        self, identifier: LValue, ass_operator: str, expression, line_number: int
+    ):
         super().__init__()
         self.line_number = line_number
 
@@ -182,7 +184,6 @@ class BinaryOperation(Node):
         self.right_expression.print(indent + 1)
 
 
-
 class UnaryMinusOperation(Node):
     def __init__(self, expression, line_number=None):
         super().__init__()
@@ -195,7 +196,6 @@ class UnaryMinusOperation(Node):
         self.expression.print(indent + 1)
 
 
-
 class TransposedExpression(Node):
     def __init__(self, expression, line_number=None):
         super().__init__()
@@ -206,7 +206,6 @@ class TransposedExpression(Node):
     def print(self, indent=0):
         print("| " * indent + "transposed")
         self.expression.print(indent + 1)
-
 
 
 class ListAccess(Node):
@@ -270,7 +269,7 @@ class RangeElement(Node):
             self.value.print(indent)
 
 
-class List(Node):
+class Vector(Node):
     def __init__(self, content, line_number=None):
         super().__init__()
         self.line_number = line_number
@@ -278,23 +277,12 @@ class List(Node):
         self.content = content
 
     def print(self, indent=0):
-        print("| " * indent + "list")
-        self.content.print(indent)
-
-
-class ListContent(Node):
-    def __init__(self, expression, next_list_content=None, line_number=None):
-        super().__init__()
-        self.line_number = line_number
-
-        self.expression = expression
-        self.next_list_content = next_list_content
-
-    def print(self, indent=0, first=True):
-        self.expression.print(indent + 1)
-
-        if self.next_list_content:
-            self.next_list_content.print(indent, first=False)
+        print("| " * indent + "vector")
+        for elem in self.content:
+            if isinstance(elem, Node):
+                elem.print(indent + 1)
+            else:
+                print("| " * (indent + 1) + str(elem))
 
 
 class Primitive(Node):
@@ -337,4 +325,3 @@ class Number(Node):
 
     def print(self, indent=0):
         print("| " * indent + str(self.value))
-

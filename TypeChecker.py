@@ -2,8 +2,8 @@
 
 import AST
 from SymbolTable import *
-
 from collections import defaultdict
+
 
 type_map = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: None)))
 
@@ -77,26 +77,24 @@ type_map["./"]["vector"]["int"] = "vector"
 type_map["./"]["vector"]["float"] = "vector"
 
 
+def type_to_str(elem):
+    if type(elem) == str:
+        return "string"
+    elif type(elem) == int:
+        return "int"
+    elif type(elem) == float:
+        return "float"
+    else:
+        return None
+
+
 class NodeVisitor(object):
-    def visit(self, node):
+    def visit(self, node: AST.Node):
         method = "visit_" + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
         return visitor(node)
 
-    def generic_visit(
-        self, node
-    ):  # Called if no explicit visitor function exists for a node.
-        # if isinstance(node, list):
-        #     for elem in node:
-        #         self.visit(elem)
-        # else:
-        #     for child in node.children:
-        #         if isinstance(child, list):
-        #             for item in child:
-        #                 if isinstance(item, AST.Node):
-        #                     self.visit(item)
-        #         elif isinstance(child, AST.Node):
-        #             self.visit(child)
+    def generic_visit(self, node: AST.Node):
         print("generic_visit", node.__class__.__name__)
 
 
@@ -153,9 +151,6 @@ class TypeChecker(NodeVisitor):
                     f"Break/Continue outside of loop in line {node.line_number}"
                 )
 
-        # else:  # RETURN
-        #     self.visit(node.expression)
-
     def visit_AssignmentStatement(self, node):
         type_ = self.visit(node.expression)
         if self.symbol_table.get(node.identifier.name) is None:
@@ -178,25 +173,56 @@ class TypeChecker(NodeVisitor):
             return None
 
     def visit_Number(self, node):
-        return "int" if type(node.value) == int else "float"
+        return type_to_str(node.value)
 
     def visit_Primitive(self, node):
         if isinstance(node.value, AST.Node):
             return self.visit(node.value)
         else:
-            return 'string'
-        
+            return "string"
+
     def visit_MatrixFunction(self, node):
         visit_type = self.visit(node.size)
-        if visit_type != 'int':
-            self.errors.append(f"Matrix size must be an integer but is {visit_type} in line {node.line_number}")
-        
-        return 'vector'
+        if visit_type != "int":
+            self.errors.append(
+                f"Matrix size must be an integer but is {visit_type} in line {node.line_number}"
+            )
 
-    def visit_List(self, node):
+        return "vector"
+
+    def visit_Vector(self, node):
+        content = node.content
+
+
+        if content is None:
+            return None
+        if isinstance(content, list):
+            size = len(content)
         
 
-        return 'vector'
+        if size > 0:
+            types = []
+            for element in content:
+                if isinstance(element, AST.Node):
+                    element_type = self.visit(element)
+                else:
+                    element_type = type_to_str(element)
+                types += [element_type]
+
+            print(types)
+            print(set(types))
+            if len(set(types)) == 1:
+                type_ = types[0]
+                if type_ in ["int", "float", "string"]:
+                    return "vector", [size]
+                else:
+                    return "vector",[size]+type_[1]
+            else:
+                self.errors.append(
+                    f"Type mismatch in line {node.line_number} : {types}. Values in vector should be of the same type."
+                )
+                return None
+            
 
     def visit_BinaryOperation(self, node):
         left_type = self.visit(node.left_expression)
