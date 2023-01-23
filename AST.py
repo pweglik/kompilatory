@@ -61,18 +61,18 @@ class WhileStatement(Node):
 
 
 class ForStatement(Node):
-    def __init__(self, identifier, elements, statement, line_number=None):
+    def __init__(self, identifier, elementsOrRange, statement, line_number=None):
         super().__init__()
         self.line_number = line_number
 
         self.identifier = identifier  # ID string
-        self.elements = elements
+        self.elementsOrRange = elementsOrRange
         self.statement = statement
 
     def print(self, indent=0):
         print("| " * indent + "for")
         self.identifier.print(indent + 1)
-        self.elements.print(indent + 1)
+        self.elementsOrRange.print(indent + 1)
         self.statement.print(indent + 1)
 
 
@@ -235,23 +235,24 @@ class ListAccessElement(Node):
 
 class Range(Node):
     def __init__(
-        self, from_expression, to_expression, step_expression=1, line_number=None
+        self, from_expression, to_expression, step_expression=None, line_number=None
     ):
         super().__init__()
         self.line_number = line_number
 
         self.from_expression = from_expression
         self.to_expression = to_expression
-        self.step_expression = step_expression
+        self.step_expression = (
+            step_expression
+            if step_expression
+            else RangeElement(Number(1))
+        )
 
     def print(self, indent=0):
         print("| " * indent + "range")
         self.from_expression.print(indent + 1)
         self.to_expression.print(indent + 1)
-        if type(self.step_expression == int):
-            print("| " * (indent + 1) + str(self.step_expression))
-        else:
-            self.step_expression.print(indent + 1)
+        self.step_expression.print(indent + 1)
 
 
 class RangeElement(Node):

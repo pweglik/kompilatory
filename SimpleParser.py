@@ -69,7 +69,7 @@ class SimpleParser(Parser):
     def IterationStatement(self, p):
         iterator = AST.LabelNode(name=p[1], line_number=p.lineno)
         return AST.ForStatement(
-            identifier=iterator, elements=p[3], statement=p[4], line_number=p.lineno
+            identifier=iterator, elementsOrRange=p[3], statement=p[4], line_number=p.lineno
         )
 
     @_("BREAK", "CONTINUE")

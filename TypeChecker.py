@@ -4,7 +4,7 @@ from typing import Union
 import AST
 from SymbolTable import *
 from collections import defaultdict
-
+import numpy as np
 
 type_map = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: None)))
 
@@ -135,11 +135,9 @@ class TypeChecker(NodeVisitor):
         self.loopcount += 1
 
         self.symbol_table = self.symbol_table.pushScope("For")
-        self.visit(node.elements)
-        # TODO range and list type
-        self.symbol_table.dict[node.identifier.name] = VarSymbol(
-            node.identifier.name, node.type_
-        )
+        symbol = self.visit(node.elementsOrRange)
+
+        self.symbol_table.dict[node.identifier.name] = symbol
 
         self.visit(node.statement)
 
@@ -157,7 +155,6 @@ class TypeChecker(NodeVisitor):
                 )
 
     def visit_AssignmentStatement(self, node):
-        # symbol = self.visit(node.expression)
         symbol = self.visit(node.expression)
         if symbol == None:
             return None
@@ -192,7 +189,38 @@ class TypeChecker(NodeVisitor):
         if isinstance(node.value, AST.Node):
             return self.visit(node.value)
         else:
-            return VarSymbol(None, type_to_str(node))
+            return VarSymbol(None, type_to_str(node.value))
+
+    def visit_Range(self, node: AST.Range):
+        from_exp = self.visit(node.from_expression)
+        to_exp = self.visit(node.to_expression)
+        step_exp = self.visit(node.step_expression)
+
+        if (
+            from_exp.type_ == "float"
+            or to_exp.type_ == "float"
+            or step_exp.type_ == "float"
+        ):
+            return VarSymbol(
+                None,
+                "float",
+            )
+        else:
+            return VarSymbol(
+                None,
+                "int",
+            )
+
+    def visit_RangeElement(self, node: AST.RangeElement):
+        if isinstance(node.value, str):
+            symbol = self.symbol_table.get(node.value)
+            if symbol is None:
+                self.errors.append(
+                    f"Variable {node.value} not declared in line {node.line_number}"
+                )
+            return symbol
+            
+        return self.visit(node.value)
 
     def visit_MatrixFunction(self, node):
         symbol = self.visit(node.size)
