@@ -168,18 +168,18 @@ class Print(Node):
 
 
 class BinaryOperation(Node):
-    def __init__(self, first_expression, operator, second_expression, line_number=None):
+    def __init__(self, left_expression, operator, right_expression, line_number=None):
         super().__init__()
         self.line_number = line_number
 
-        self.first_expression = first_expression
+        self.left_expression = left_expression
         self.operator = operator
-        self.second_expression = second_expression
+        self.right_expression = right_expression
 
     def print(self, indent=0):
         print("| " * indent + self.operator)
-        self.first_expression.print(indent + 1)
-        self.second_expression.print(indent + 1)
+        self.left_expression.print(indent + 1)
+        self.right_expression.print(indent + 1)
 
 
 

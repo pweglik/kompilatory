@@ -199,8 +199,8 @@ class TypeChecker(NodeVisitor):
         return 'vector'
 
     def visit_BinaryOperation(self, node):
-        left_type = self.visit(node.left)
-        right_type = self.visit(node.right)
+        left_type = self.visit(node.left_expression)
+        right_type = self.visit(node.right_expression)
 
         if left_type is None or right_type is None:
             return None
