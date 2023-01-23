@@ -13,18 +13,13 @@ if __name__ == "__main__":
     text = \
     """
 
-    A = zeros(1);
-    A = zeros(5);  # create 5x5 matrix filled with zeros
-B = ones(7);   # create 7x7 matrix filled with ones
-I = eye(10);   # create 10x10 matrix filled with ones on diagonal and zeros elsewhere
-
-E1 = [ [ 1, 2, 3],
-       [ 4, 5, 6],
-       [ 7, 8, 9] ];
-
-
-A[1][3] = 0;
-
+        a = 0;
+        b = 1;
+        while (b < 1000) {
+            print b;
+            b += a;
+            a = b - a;
+        }
 
     """
 

@@ -13,10 +13,6 @@ class Node(ABC):
     def print(self, indent=0):
         pass
 
-    @abstractmethod
-    def graph(self, dot):
-        pass
-
 
 class StatementList(
     Node,
@@ -30,16 +26,6 @@ class StatementList(
     def print(self, indent=0):
         for statement in self.statements:
             statement.print(indent)
-
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label="StatementList", shape="ellipse")
-        dot.add_node(main_node)
-        for i, statement in enumerate(self.statements):
-            node = statement.graph(dot)
-            dot.add_node(node)
-            edge = pydot.Edge(self.id, statement.id, label=i)
-            dot.add_edge(edge)
-        return main_node
 
 
 class SelectionStatement(Node):
@@ -60,21 +46,6 @@ class SelectionStatement(Node):
         if self.statement_false:
             self.statement_false.print(indent + 1)
 
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label="SelectionStatement", shape="ellipse")
-        dot.add_node(main_node)
-        node1 = self.expression.graph(dot)
-        node2 = self.statement_true.graph(dot)
-        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
-        edge2 = pydot.Edge(self.id, self.statement_true.id, label=1)
-        dot.add_edge(edge1)
-        dot.add_edge(edge2)
-        if self.statement_false:
-            node3 = self.statement_false.graph(dot)
-            edge3 = pydot.Edge(self.id, self.statement_false.id, label=2)
-            dot.add_edge(edge3)
-        return main_node
-
 
 class WhileStatement(Node):
     def __init__(self, expression, statement, line_number):
@@ -88,17 +59,6 @@ class WhileStatement(Node):
         print("| " * indent + "while")
         self.expression.print(indent + 1)
         self.statement.print(indent + 1)
-
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label="while", shape="ellipse")
-        dot.add_node(main_node)
-        node1 = self.expression.graph(dot)
-        node2 = self.statement.graph(dot)
-        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
-        edge2 = pydot.Edge(self.id, self.statement.id, label=1)
-        dot.add_edge(edge1)
-        dot.add_edge(edge2)
-        return main_node
 
 
 class ForStatement(Node):
@@ -116,20 +76,6 @@ class ForStatement(Node):
         self.elements.print(indent + 1)
         self.statement.print(indent + 1)
 
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label="for", shape="ellipse")
-        dot.add_node(main_node)
-        node1 = self.identifier.graph(dot)
-        node2 = self.elements.graph(dot)
-        node3 = self.statement.graph(dot)
-        edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
-        edge2 = pydot.Edge(self.id, self.elements.id, label=1)
-        edge3 = pydot.Edge(self.id, self.statement.id, label=2)
-        dot.add_edge(edge1)
-        dot.add_edge(edge2)
-        dot.add_edge(edge3)
-        return main_node
-
 
 class LabelNode(Node):
     def __init__(self, name, line_number=None):
@@ -140,11 +86,6 @@ class LabelNode(Node):
 
     def print(self, indent=0):
         print("| " * indent + str(self.name))
-
-    def graph(self, dot):
-        node = pydot.Node(self.id, label=self.name, shape="ellipse")
-        dot.add_node(node)
-        return node
 
 
 class JumpStatement(Node):
@@ -158,21 +99,17 @@ class JumpStatement(Node):
     def print(self, indent=0):
         print("| " * indent + self.name)
 
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label=self.name, shape="ellipse")
-        dot.add_node(main_node)
-        if self.expression:
-            node = self.expression.graph(dot)
-            edge = pydot.Edge(self.id, self.expression.id, label=0)
-            dot.add_edge(edge)
-        return main_node
-
 
 class PrintStatement(Node):
     def __init__(self, expression, line_number):
         self.line_number = line_number
 
         self.expression = expression
+
+    def print(self, indent=0):
+        print("| " * indent + 'print')
+
+        self.expression.print(indent)
 
 class LValue(Node):
     def __init__(self, id, list_access=None, line_number=None):
@@ -186,15 +123,6 @@ class LValue(Node):
         print("| " * indent + self.name)
         if self.list_access:
             self.list_access.print(indent, first=True)
-
-    def graph(self, dot):
-        node = pydot.Node(self.id, label=self.name, shape="ellipse")
-        dot.add_node(node)
-
-        if self.list_access:
-            self.list_access.graph(dot, self.id)
-
-        return node
 
 
 class AssignmentStatement(Node):
@@ -213,18 +141,6 @@ class AssignmentStatement(Node):
         print("| " * indent + str(self.ass_operator))
         self.identifier.print(indent + 1)
         self.expression.print(indent + 1)
-
-    def graph(self, dot):
-
-        main_node = pydot.Node(self.id, label=self.ass_operator, shape="ellipse")
-        dot.add_node(main_node)
-        node1 = self.identifier.graph(dot)
-        node2 = self.expression.graph(dot)
-        edge1 = pydot.Edge(self.id, self.identifier.id, label=0)
-        edge2 = pydot.Edge(self.id, self.expression.id, label=1)
-        dot.add_edge(edge1)
-        dot.add_edge(edge2)
-        return main_node
 
 
 class Continue(Node):
@@ -265,16 +181,6 @@ class BinaryOperation(Node):
         self.first_expression.print(indent + 1)
         self.second_expression.print(indent + 1)
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label=self.operator, shape="ellipse")
-        dot.add_node(node)
-        node1 = self.first_expression.graph(dot)
-        node2 = self.second_expression.graph(dot)
-        edge1 = pydot.Edge(self.id, self.first_expression.id, label=0)
-        edge2 = pydot.Edge(self.id, self.second_expression.id, label=1)
-        dot.add_edge(edge1)
-        dot.add_edge(edge2)
-        return node
 
 
 class UnaryMinusOperation(Node):
@@ -288,13 +194,6 @@ class UnaryMinusOperation(Node):
         print("| " * indent + "-")
         self.expression.print(indent + 1)
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label="-", shape="ellipse")
-        dot.add_node(node)
-        node1 = self.expression.graph(dot)
-        edge = pydot.Edge(self.id, self.expression.id, label=0)
-        dot.add_edge(edge)
-        return node
 
 
 class TransposedExpression(Node):
@@ -308,13 +207,6 @@ class TransposedExpression(Node):
         print("| " * indent + "transposed")
         self.expression.print(indent + 1)
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label="transposed", shape="ellipse")
-        dot.add_node(node)
-        node1 = self.expression.graph(dot)
-        edge = pydot.Edge(self.id, self.expression.id, label=0)
-        dot.add_edge(edge)
-        return node
 
 
 class ListAccess(Node):
@@ -331,25 +223,6 @@ class ListAccess(Node):
         if self.next_list_access:
             self.next_list_access.print(indent)
 
-    def graph(self, dot, l_value_id):
-        node = pydot.Node(
-            self.id,
-            label="list access",
-            shape="ellipse",
-        )
-        dot.add_node(node)
-
-        edge = pydot.Edge(l_value_id, self.id, label=0)
-        dot.add_edge(edge)
-
-        node1 = self.element.graph(dot)
-        edge1 = pydot.Edge(self.id, self.element.id, label=0)
-        dot.add_edge(edge1)
-
-        if self.next_list_access:
-            self.next_list_access.graph(dot, l_value_id)
-        return node
-
 
 class ListAccessElement(Node):
     def __init__(self, value, line_number=None):
@@ -360,16 +233,6 @@ class ListAccessElement(Node):
 
     def print(self, indent=0, first=False):
         print("| " * indent + f"[{str(self.value)}]")
-
-    def graph(self, dot):
-        node = pydot.Node(
-            self.id,
-            label=f"[{self.value}]",
-            shape="ellipse",
-        )
-        dot.add_node(node)
-
-        return node
 
 
 class Range(Node):
@@ -392,21 +255,6 @@ class Range(Node):
         else:
             self.step_expression.print(indent + 1)
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label="range", shape="ellipse")
-        dot.add_node(node)
-        node1 = self.from_expression.graph(dot)
-        # node2 = self.to_el.graph(dot)
-        # node3 = self.step_el.graph(dot)
-        # edge1 = pydot.Edge(self.id, self.from_el.id, label=0)
-        # edge2 = pydot.Edge(self.id, self.to_el.id, label=1)
-        # edge3 = pydot.Edge(self.id, self.step_el.id, label=2)
-        # dot.add_edge(edge1)
-        # dot.add_edge(edge2)
-        # dot.add_edge(edge3)
-        return node
-        # TODO: check
-
 
 class RangeElement(Node):
     def __init__(self, value, line_number=None):
@@ -421,14 +269,6 @@ class RangeElement(Node):
         else:
             self.value.print(indent)
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label="label", shape="ellipse")
-        dot.add_node(node)
-        node1 = self.value.graph(dot)
-        edge = pydot.Edge(self.id, self.value.id, label=0)
-        dot.add_edge(edge)
-        return node
-
 
 class List(Node):
     def __init__(self, content, line_number=None):
@@ -440,17 +280,6 @@ class List(Node):
     def print(self, indent=0):
         print("| " * indent + "list")
         self.content.print(indent)
-
-    def graph(self, dot):
-        node = pydot.Node(
-            self.id,
-            label="list",
-            shape="ellipse",
-        )
-        dot.add_node(node)
-
-        self.content.graph(dot, self.id)
-        return node
 
 
 class ListContent(Node):
@@ -466,26 +295,6 @@ class ListContent(Node):
 
         if self.next_list_content:
             self.next_list_content.print(indent, first=False)
-
-    def graph(self, dot, list_id):
-        node = pydot.Node(
-            self.id,
-            label="list element",
-            shape="ellipse",
-        )
-        dot.add_node(node)
-
-        edge = pydot.Edge(list_id, self.id, label=0)
-        dot.add_edge(edge)
-
-        node1 = self.expression.graph(dot)
-        edge1 = pydot.Edge(self.id, self.expression.id, label=0)
-        dot.add_edge(edge1)
-
-        if self.next_list_content:
-            self.next_list_content.graph(dot, list_id)
-
-        return node
 
 
 class Primitive(Node):
@@ -505,21 +314,6 @@ class Primitive(Node):
             + str(self.value.value if isinstance(self.value, Number) else self.value)
         )
 
-    def graph(self, dot):
-        node = pydot.Node(
-            self.id,
-            label=str("Number" if isinstance(self.value, Number) else self.value),
-            shape="ellipse",
-        )
-        dot.add_node(node)
-
-        if isinstance(self.value, Number):
-            node2 = self.value.graph(dot)
-            edge = pydot.Edge(self.id, self.value.id, label=0)
-            dot.add_edge(edge)
-
-        return node
-
 
 class MatrixFunction(Node):
     def __init__(self, function, size, line_number=None):
@@ -533,17 +327,6 @@ class MatrixFunction(Node):
         print("| " * indent + f"{self.function}")
         self.size.print(indent + 1)
 
-    def graph(self, dot):
-        main_node = pydot.Node(self.id, label=self.function, shape="ellipse")
-        dot.add_node(main_node)
-        node1 = self.size.graph(dot)
-        edge = pydot.Edge(self.id, self.size.id, label=0)
-        dot.add_edge(edge)
-        return main_node
-
-
-
-
 
 class Number(Node):
     def __init__(self, value, line_number=None):
@@ -555,7 +338,3 @@ class Number(Node):
     def print(self, indent=0):
         print("| " * indent + str(self.value))
 
-    def graph(self, dot):
-        node = pydot.Node(self.id, label=self.value, shape="ellipse")
-        dot.add_node(node)
-        return node
