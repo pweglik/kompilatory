@@ -223,32 +223,6 @@ class TransposedExpression(Node):
         self.expression.print(indent + 1)
 
 
-class ListAccess(Node):
-    def __init__(self, element, next_list_access=None, line_number=None):
-        super().__init__()
-        self.line_number = line_number
-
-        self.element = element
-        self.next_list_access = next_list_access
-
-    def print(self, indent=0, first=False):
-        self.element.print(indent + 1, first)
-
-        if self.next_list_access:
-            self.next_list_access.print(indent)
-
-
-class ListAccessElement(Node):
-    def __init__(self, value, line_number=None):
-        super().__init__()
-        self.line_number = line_number
-
-        self.value = value
-
-    def print(self, indent=0, first=False):
-        print("| " * indent + f"[{str(self.value)}]")
-
-
 class Range(Node):
     def __init__(
         self, from_expression, to_expression, step_expression=None, line_number=None
