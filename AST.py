@@ -299,7 +299,7 @@ class Primitive(Node):
     def print(self, indent=0):
         print(
             "| " * indent
-            + str(self.value.value if isinstance(self.value, Number) else self.value)
+            + str(self.value.value) if isinstance(self.value, Number) else f'"{self.value}"'
         )
 
 
