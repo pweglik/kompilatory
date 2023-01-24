@@ -58,12 +58,7 @@ class Interpreter(object):
     def visit(self, node: AST.ForStatement):
         self.memory.push_memory_to_stack()
 
-        list_to_iterate = None
-        if isinstance(node.elementsOrRange, AST.Range):
-            list_to_iterate = self.visit(node.elementsOrRange)
-        elif isinstance(node.elementsOrRange, AST.Vector):
-            list_to_iterate = list(map(lambda el: self.visit(el), node.elementsOrRange.content))
-
+        list_to_iterate = self.visit(node.elementsOrRange)
 
         for el in list_to_iterate:
             self.memory.set_variable(self.visit(node.identifier), el)
@@ -149,7 +144,7 @@ class Interpreter(object):
 
     @when(AST.Vector)
     def visit(self, node: AST.Vector):
-        return node.content
+        return list(map(lambda el: self.visit(el), node.content))
 
     @when(AST.LabelNode)
     def visit(self, node: AST.LabelNode):
