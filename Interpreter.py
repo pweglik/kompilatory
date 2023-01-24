@@ -29,7 +29,21 @@ class Interpreter(object):
 
     @when(AST.AssignmentStatement)
     def visit(self, node: AST.AssignmentStatement):
-        self.memory.set_variable(node.identifier.name, self.visit(node.expression))
+        
+        right = self.visit(node.expression)
+
+        if node.ass_operator == "=":
+            self.memory.set_variable(node.identifier.name, right)
+        else:
+            variable = self.memory.get_variable(node.identifier.name)
+            if node.ass_operator == "+=":
+                self.memory.set_variable(node.identifier.name, variable + right)
+            elif node.ass_operator == "-=":
+                self.memory.set_variable(node.identifier.name, variable - right)
+            elif node.ass_operator == "*=":
+                self.memory.set_variable(node.identifier.name, variable * right)
+            elif node.ass_operator == "/=":
+                self.memory.set_variable(node.identifier.name, variable / right)
 
     @when(AST.WhileStatement)
     def visit(self, node: AST.WhileStatement):
