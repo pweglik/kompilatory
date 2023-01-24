@@ -126,18 +126,6 @@ class SimpleParser(Parser):
     def Expression(self, p):
         return p[0]
 
-    @_('"[" ListAccessElement "]"')
-    def ListAccess(self, p):
-        return AST.ListAccess(element=p[1], line_number=p.lineno)
-
-    @_('"[" ListAccessElement "]" ListAccess')
-    def ListAccess(self, p):
-        return AST.ListAccess(element=p[1], next_list_access=p[3], line_number=p.lineno)
-
-    @_("INT", "ID")
-    def ListAccessElement(self, p):
-        return AST.ListAccessElement(value=p[0])
-
     @_('RangeElement ":" RangeElement')
     def Range(self, p):
         return AST.Range(
@@ -214,7 +202,7 @@ class SimpleParser(Parser):
     def LValue(self, p):
         return AST.LValue(p[0], line_number=p.lineno)
 
-    @_("ID ListAccess")
+    @_("ID List")
     def LValue(self, p):
         return AST.LValue(p[0], p[1], line_number=p.lineno)
 

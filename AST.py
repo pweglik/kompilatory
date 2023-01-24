@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from typing import Union
 
 class Node(ABC):
     count = 0
@@ -110,8 +110,24 @@ class PrintStatement(Node):
         self.expression.print(indent + 1)
 
 
+class Vector(Node):
+    def __init__(self, content, line_number=None):
+        super().__init__()
+        self.line_number = line_number
+
+        self.content = content
+
+    def print(self, indent=0):
+        print("| " * indent + "vector")
+        for elem in self.content:
+            if isinstance(elem, Node):
+                elem.print(indent + 1)
+            else:
+                print("| " * (indent + 1) + str(elem))
+
+
 class LValue(Node):
-    def __init__(self, id, list_access=None, line_number=None):
+    def __init__(self, id, list_access: Union[Vector, None]=None, line_number=None):
         super().__init__()
         self.line_number = line_number
 
@@ -121,7 +137,7 @@ class LValue(Node):
     def print(self, indent=0):
         print("| " * indent + self.name)
         if self.list_access:
-            self.list_access.print(indent, first=True)
+            self.list_access.print(indent)
 
 
 class AssignmentStatement(Node):
@@ -243,9 +259,7 @@ class Range(Node):
         self.from_expression = from_expression
         self.to_expression = to_expression
         self.step_expression = (
-            step_expression
-            if step_expression
-            else RangeElement(Number(1))
+            step_expression if step_expression else RangeElement(Number(1))
         )
 
     def print(self, indent=0):
@@ -269,22 +283,6 @@ class RangeElement(Node):
             self.value.print(indent)
 
 
-class Vector(Node):
-    def __init__(self, content, line_number=None):
-        super().__init__()
-        self.line_number = line_number
-
-        self.content = content
-
-    def print(self, indent=0):
-        print("| " * indent + "vector")
-        for elem in self.content:
-            if isinstance(elem, Node):
-                elem.print(indent + 1)
-            else:
-                print("| " * (indent + 1) + str(elem))
-
-
 class Primitive(Node):
     def __init__(self, value, line_number=None):
         super().__init__()
@@ -298,8 +296,9 @@ class Primitive(Node):
 
     def print(self, indent=0):
         print(
-            "| " * indent
-            + str(self.value.value) if isinstance(self.value, Number) else f'"{self.value}"'
+            "| " * indent + str(self.value.value)
+            if isinstance(self.value, Number)
+            else f'"{self.value}"'
         )
 
 

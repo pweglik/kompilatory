@@ -17,6 +17,9 @@ if __name__ == "__main__":
 
     for i = [1,3,5,7] print "*" * i;
 
+    A = [1,2,3,4,5];
+    b = A[0];
+
     """
 
     tokens = lexer.tokenize(text)
