@@ -135,7 +135,13 @@ class TypeChecker(NodeVisitor):
         self.loopcount += 1
 
         self.symbol_table = self.symbol_table.pushScope("For")
-        symbol = self.visit(node.elementsOrRange)
+
+        if isinstance(node.elementsOrRange, AST.Range):
+            symbol = self.visit(node.elementsOrRange)
+        elif isinstance(node.elementsOrRange, AST.Vector):
+            symbol = self.visit(node.elementsOrRange.content[0])
+
+
 
         self.symbol_table.dict[node.identifier.name] = symbol
 
