@@ -33,7 +33,17 @@ class Interpreter(object):
         right = self.visit(node.expression)
 
         if node.ass_operator == "=":
-            self.memory.set_variable(node.identifier.name, right)
+            if node.identifier.list_access == None:
+                self.memory.set_variable(node.identifier.name, right)
+            else:
+                variable = self.memory.get_variable(node.identifier.name)
+                list_access = self.visit(node.identifier.list_access)
+                
+                if len(list_access) == 1:
+                    variable[list_access[0]] = right
+                elif len(list_access) == 2:
+                    variable[list_access[0], list_access[1]] = right
+                
         else:
             variable = self.memory.get_variable(node.identifier.name)
             if node.ass_operator == "+=":
@@ -121,8 +131,17 @@ class Interpreter(object):
 
     @when(AST.LValue)
     def visit(self, node: AST.LValue):
-        return self.memory.get_variable(node.name)
+        if node.list_access == None:
+            return self.memory.get_variable(node.name)
+        else:
+            variable = self.memory.get_variable(node.name)
+            list_access = self.visit(node.list_access)
 
+            for access in list_access:
+                variable = variable[access]
+
+            return variable
+    
     @when(AST.Range)
     def visit(self, node: AST.Range):
         return np.arange(
