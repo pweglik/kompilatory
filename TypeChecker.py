@@ -114,12 +114,12 @@ class TypeChecker(NodeVisitor):
         for statement in node.statements:
             self.visit(statement)
 
-    def visit_SelectionStatement(self, node):
+    def visit_SelectionStatement(self, node: AST.SelectionStatement):
         self.visit(node.expression)
-        self.visit(node.statement)
+        self.visit(node.statement_true)
 
-        if node.else_statement is not None:
-            self.visit(node.else_statement)
+        if node.statement_false is not None:
+            self.visit(node.statement_false)
 
     def visit_WhileStatement(self, node):
         self.loopcount += 1
