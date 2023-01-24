@@ -47,16 +47,30 @@ class Interpreter(object):
 
     @when(AST.WhileStatement)
     def visit(self, node: AST.WhileStatement):
+        self.memory.push_memory_to_stack()
+
         while self.visit(node.expression):
             self.visit(node.statement)
+        
+        self.memory.pop_memory_from_stack()
 
     @when(AST.ForStatement)
     def visit(self, node: AST.ForStatement):
-        list_to_iterate = self.visit(node.elementsOrRange)
+        self.memory.push_memory_to_stack()
 
-        for el in map(lambda el: self.visit(el), list_to_iterate):
+        list_to_iterate = None
+        if isinstance(node.elementsOrRange, AST.Range):
+            list_to_iterate = self.visit(node.elementsOrRange)
+        elif isinstance(node.elementsOrRange, AST.Vector):
+            list_to_iterate = list(map(lambda el: self.visit(el), node.elementsOrRange.content))
+
+
+        for el in list_to_iterate:
             self.memory.set_variable(self.visit(node.identifier), el)
             self.visit(node.statement)
+
+        self.memory.pop_memory_from_stack()
+
 
     @when(AST.BinaryOperation)
     def visit(self, node: AST.BinaryOperation):
