@@ -91,17 +91,13 @@ class Interpreter(object):
         elif node.operator == "/":
             return left / right
         elif node.operator == ".+":
-            pass
-            # TODO
+            return left + right
         elif node.operator == ".-":
-            pass
-            # TODO
+            return left - right
         elif node.operator == ".*":
-            pass
-            # TODO
+            return np.multiply(left, right)
         elif node.operator == "./":
-            pass
-            # TODO
+            return np.divide(left, right)
         elif node.operator == "==":
             return left == right
         elif node.operator == "!=":
@@ -135,6 +131,16 @@ class Interpreter(object):
                     self.visit(node.step_expression),
                 )
 
+    @when(AST.MatrixFunction)
+    def visit(self, node: AST.MatrixFunction):
+        size = self.visit(node.size)
+        if node.function == 'zeros':
+            return np.zeros((size, size))
+        elif node.function == 'ones':
+            return np.ones((size, size))
+        elif node.function == 'eye':
+            return np.eye(size)
+
     @when(AST.RangeElement)
     def visit(self, node: AST.RangeElement):
         if isinstance(node.value, str):
@@ -150,24 +156,3 @@ class Interpreter(object):
     def visit(self, node: AST.LabelNode):
         return node.name
 
-    #  @when(AST.BinOp)
-    # def visit(self, node):
-    #     r1 = node.left.accept(self)
-    #     r2 = node.right.accept(self)
-    # try sth smarter than:
-    # if(node.op=='+') return r1+r2
-    # elsif(node.op=='-') ...
-    # but do not use python eval
-
-    # @when(AST.Assignment)
-    # def visit(self, node):
-    # #
-    # #
-
-    # # simplistic while loop interpretation
-    # @when(AST.WhileInstr)
-    # def visit(self, node):
-    #     r = None
-    #     while node.cond.accept(self):
-    #         r = node.body.accept(self)
-    #     return r
