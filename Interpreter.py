@@ -71,6 +71,16 @@ class Interpreter(object):
 
         self.memory.pop_memory_from_stack()
 
+    @when(AST.SelectionStatement)
+    def visit(self, node: AST.SelectionStatement):
+        self.memory.push_memory_to_stack()
+
+        if self.visit(node.expression):
+            self.visit(node.statement_true)
+        elif node.statement_false != None:
+            self.visit(node.statement_false)
+
+        self.memory.pop_memory_from_stack()
 
     @when(AST.BinaryOperation)
     def visit(self, node: AST.BinaryOperation):
