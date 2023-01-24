@@ -15,13 +15,7 @@ if __name__ == "__main__":
     n = 10;
     for i = 1:n print "*" * i;
 
-    # a = 0;
-    # b = 1;
-    # while (b < 1000) {
-    #     print b;
-    #     b = a + b;
-    #     a = b - a;
-    # }
+    for i = [1,3,5,7] print "*" * i;
 
     """
 

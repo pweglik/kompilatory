@@ -40,7 +40,7 @@ class Interpreter(object):
     def visit(self, node: AST.ForStatement):
         list_to_iterate = self.visit(node.elementsOrRange)
 
-        for el in list_to_iterate:
+        for el in map(lambda el: self.visit(el), list_to_iterate):
             self.memory.set_variable(self.visit(node.identifier), el)
             self.visit(node.statement)
 
